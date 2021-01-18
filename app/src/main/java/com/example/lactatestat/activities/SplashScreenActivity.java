@@ -1,4 +1,4 @@
-package com.example.lactatestat;
+package com.example.lactatestat.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 

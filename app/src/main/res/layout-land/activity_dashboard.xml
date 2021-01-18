@@ -24,8 +24,9 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:contentDescription="@string/lactatestat_logo_description"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/connection_info"
         app:srcCompat="@drawable/lactatestat_splash_logo" />
@@ -35,7 +36,6 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="@string/connect_button_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/secondaryTextColor"
@@ -44,24 +44,25 @@
         app:icon="@drawable/ic_baseline_bluetooth_24"
         app:iconTint="#2196F3"
         app:iconTintMode="src_in"
+        app:layout_constraintBottom_toTopOf="@+id/history_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <Button
         android:id="@+id/history_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/history_button_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/secondaryTextColor"
         app:backgroundTint="#FFFFFF"
         app:icon="@drawable/ic_baseline_show_chart_24"
         app:iconTint="#009688"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/connect_button" />
 
     <TextView
@@ -75,8 +76,8 @@
         android:textColor="@color/secondaryTextColor"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
