@@ -24,9 +24,59 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/lactatestat_logo_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:srcCompat="@drawable/lactatestat_splash_logo"
-        android:contentDescription="@string/lactatestat_logo_description" />
+        app:layout_constraintTop_toBottomOf="@+id/connection_info"
+        app:srcCompat="@drawable/lactatestat_splash_logo" />
+
+    <Button
+        android:id="@+id/connect_button"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/connect_button_text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/secondaryTextColor"
+        app:backgroundTint="@color/white"
+        app:backgroundTintMode="add"
+        app:icon="@drawable/ic_baseline_bluetooth_24"
+        app:iconTint="#2196F3"
+        app:iconTintMode="src_in"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <Button
+        android:id="@+id/button4"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/history_button_text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/secondaryTextColor"
+        app:backgroundTint="#FFFFFF"
+        app:icon="@drawable/ic_baseline_show_chart_24"
+        app:iconTint="#009688"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connect_button" />
+
+    <TextView
+        android:id="@+id/connection_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="@string/status_not_connected"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

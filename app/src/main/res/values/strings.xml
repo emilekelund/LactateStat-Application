@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">LactateStat</string>
     <string name="lactatestat_logo_description">LactateStat Logo</string>
+    <string name="connect_button_text">Connect to LactateStat</string>
+    <string name="history_button_text">LactateStat History</string>
+    <string name="status_not_connected">LactateStat not connected</string>
 </resources>
