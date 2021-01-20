@@ -7,4 +7,5 @@
     <string name="select_lactatestat">Select Device</string>
     <string name="no_devices_found">No Devices Found</string>
     <string name="cancel_search">Cancel search</string>
+    <string name="new_session">New Session</string>
 </resources>
