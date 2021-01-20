@@ -224,6 +224,11 @@ public class bleScanDialog extends Activity {
     // Device has been selected, setup connection
     private void onDeviceSelected(int position) {
         BluetoothDevice selectedDevice = mDeviceList.get(position);
+
+        Intent intent = new Intent(bleScanDialog.this, DashboardActivity.class);
+        intent.putExtra(SELECTED_DEVICE, selectedDevice);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     // callback for ActivityCompat.requestPermissions
