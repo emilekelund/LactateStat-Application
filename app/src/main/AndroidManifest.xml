@@ -28,7 +28,7 @@
         <activity android:name=".activities.DashboardActivity"/>
         <activity
             android:name=".activities.bleScanDialog"
-            android:theme="@android:style/Theme.Material.Dialog"
+            android:theme="@android:style/Theme.Material.Light.Dialog.NoActionBar"
             tools:targetApi="lollipop" />
     </application>
 

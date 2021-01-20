@@ -1,6 +1,8 @@
 package com.example.lactatestat.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,5 +20,10 @@ public class DashboardActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Dashboard");
+    }
+
+    public void start_ble_search(View view) {
+        Intent start_scan = new Intent(DashboardActivity.this, bleScanDialog.class);
+        startActivity(start_scan);
     }
 }

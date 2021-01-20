@@ -4,4 +4,7 @@
     <string name="connect_button_text">Connect to LactateStat</string>
     <string name="history_button_text">LactateStat History</string>
     <string name="status_not_connected">LactateStat not connected</string>
+    <string name="select_lactatestat">Select Device</string>
+    <string name="no_devices_found">No Devices Found</string>
+    <string name="cancel_search">Cancel search</string>
 </resources>
