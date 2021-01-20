@@ -22,7 +22,7 @@ public class DashboardActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setTitle("Dashboard");
     }
 
-    public void start_ble_search(View view) {
+    public void startBleSearch(View view) {
         Intent start_scan = new Intent(DashboardActivity.this, bleScanDialog.class);
         startActivity(start_scan);
     }

@@ -47,7 +47,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        android:onClick="start_ble_search"/>
+        android:onClick="startBleSearch"/>
 
     <Button
         android:id="@+id/history_button"
