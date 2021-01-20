@@ -26,7 +26,6 @@ import java.util.Objects;
 public class DashboardActivity extends AppCompatActivity {
 
     private static final String TAG = bleScanDialog.class.getSimpleName();
-    public static String SELECTED_DEVICE = "Selected device";
 
     private BluetoothDevice mSelectedDevice = null;
     private BleService mBluetoothLeService;
@@ -35,7 +34,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     static final int SCAN_DEVICE_REQUEST = 0;
 
-
+    // TODO: CREATE GATT RECEIVER SO WE CAN CHANGE THE STATUS TEXT IF DISCONNECTED
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
