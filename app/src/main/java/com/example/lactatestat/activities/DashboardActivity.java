@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ public class DashboardActivity extends AppCompatActivity {
     private BleService mBluetoothLeService;
     private TextView mStatusView;
     private String mDeviceAddress;
+    private ImageView mStatusIconView;
 
     static final int SCAN_DEVICE_REQUEST = 0;
 
@@ -51,6 +53,7 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
         mStatusView = findViewById(R.id.connection_info);
+        mStatusIconView = findViewById(R.id.bl_status_icon);
 
         if (savedInstanceState != null) {
             mDeviceAddress = savedInstanceState.getString(DEVICE_ADDRESS);
@@ -137,6 +140,8 @@ public class DashboardActivity extends AppCompatActivity {
                     MessageUtils.createDialog("Error", "No device found", this).show();
                 } else {
                     mStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
+                    mStatusView.setTextColor(getResources().getColor(R.color.connectedColor));
+                    mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_connected_24));
                     mDeviceAddress = mSelectedDevice.getAddress();
                     Log.i(TAG, "DeviceAddress: " + mDeviceAddress);
                     startBleService();
@@ -160,15 +165,23 @@ public class DashboardActivity extends AppCompatActivity {
                         case LACTATESTAT_SERVICE_DISCOVERED:
                         case DATA_AVAILABLE:
                             mStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
+                            mStatusView.setTextColor(getResources().getColor(R.color.connectedColor));
+                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_connected_24));
                             break;
                         case GATT_DISCONNECTED:
                             mStatusView.setText(R.string.status_not_connected);
+                            mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
+                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_24));
                             break;
                         case LACTATESTAT_SERVICE_NOT_AVAILABLE:
                             mStatusView.setText(event.toString());
+                            mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
+                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_24));
                             break;
                         default:
                             mStatusView.setText(R.string.device_unreachable);
+                            mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
+                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_24));
                             break;
                     }
                 }

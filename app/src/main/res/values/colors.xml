@@ -15,4 +15,6 @@
     <color name="secondaryDarkColor">#0069c0</color>
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#000000</color>
+    <color name="connectedColor">#119100</color>
+    <color name="disconnectedColor">#9F1414</color>
 </resources>
