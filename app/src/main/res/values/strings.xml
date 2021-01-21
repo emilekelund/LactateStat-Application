@@ -8,4 +8,6 @@
     <string name="no_devices_found">No Devices Found</string>
     <string name="cancel_search">Cancel search</string>
     <string name="new_session">New Session</string>
+    <string name="device_unreachable">Device unreachable</string>
+    <string name="bluetooth_not_connected_description">bluetooth_not_connected</string>
 </resources>

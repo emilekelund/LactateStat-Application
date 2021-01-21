@@ -1,8 +1,11 @@
 package com.example.lactatestat.activities;
 
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,22 +22,27 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.lactatestat.R;
 import com.example.lactatestat.services.BleService;
+import com.example.lactatestat.services.GattActions;
 import com.example.lactatestat.utilities.MessageUtils;
 
+import java.io.IOException;
 import java.util.Objects;
+
+import static com.example.lactatestat.services.GattActions.ACTION_GATT_LACTATESTAT_EVENT;
+import static com.example.lactatestat.services.GattActions.EVENT;
 
 public class DashboardActivity extends AppCompatActivity {
 
     private static final String TAG = bleScanDialog.class.getSimpleName();
+    private static final String DEVICE_ADDRESS = "deviceAddress";
+    private static final String SELECTED_DEVICE = "selectedDevice";
 
-    private BluetoothDevice mSelectedDevice = null;
+    private BluetoothDevice mSelectedDevice;
     private BleService mBluetoothLeService;
     private TextView mStatusView;
     private String mDeviceAddress;
 
     static final int SCAN_DEVICE_REQUEST = 0;
-
-    // TODO: CREATE GATT RECEIVER SO WE CAN CHANGE THE STATUS TEXT IF DISCONNECTED
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -44,26 +52,49 @@ public class DashboardActivity extends AppCompatActivity {
 
         mStatusView = findViewById(R.id.connection_info);
 
+        if (savedInstanceState != null) {
+            mDeviceAddress = savedInstanceState.getString(DEVICE_ADDRESS);
+            mSelectedDevice = savedInstanceState.getParcelable(SELECTED_DEVICE);
+            startBleService();
+        } else {
+            mSelectedDevice = null;
+        }
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Dashboard");
 
-        // Bind to the BleService
-        Intent gattServiceIntent = new Intent(this, BleService.class);
-        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+    }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        if (mBluetoothLeService != null) {
+            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+            Log.d(TAG, "Connect request result=" + result);
+        }
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(mServiceConnection);
-        mBluetoothLeService = null;
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mGattUpdateReceiver);
     }
 
-    /*
-    Callback methods to manage the (BleImu)Service lifecycle.
-    */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mBluetoothLeService != null) {
+            unbindService(mServiceConnection);
+            mBluetoothLeService = null;
+        }
+
+    }
+
+    // Callback methods to manage the (Ble)Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -91,6 +122,11 @@ public class DashboardActivity extends AppCompatActivity {
         startActivityForResult(start_scan, SCAN_DEVICE_REQUEST);
     }
 
+    public void startBleService() {
+        Intent mGattServiceIntent = new Intent(this, BleService.class);
+        bindService(mGattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
@@ -102,11 +138,55 @@ public class DashboardActivity extends AppCompatActivity {
                 } else {
                     mStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
                     mDeviceAddress = mSelectedDevice.getAddress();
+                    Log.i(TAG, "DeviceAddress: " + mDeviceAddress);
+                    startBleService();
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    // A BroadcastReceiver handling various events fired by the Service, see GattActions.Event.
+    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (ACTION_GATT_LACTATESTAT_EVENT.equals(action)) {
+                GattActions.Event event = (GattActions.Event) intent.getSerializableExtra(EVENT);
+                if (event != null) {
+                    switch (event) {
+                        case GATT_CONNECTED:
+                        case GATT_SERVICES_DISCOVERED:
+                        case LACTATESTAT_SERVICE_DISCOVERED:
+                        case DATA_AVAILABLE:
+                            mStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
+                            break;
+                        case GATT_DISCONNECTED:
+                            mStatusView.setText(R.string.status_not_connected);
+                            break;
+                        case LACTATESTAT_SERVICE_NOT_AVAILABLE:
+                            mStatusView.setText(event.toString());
+                            break;
+                        default:
+                            mStatusView.setText(R.string.device_unreachable);
+                            break;
+                    }
+                }
+            }
+        }
+    };
 
+    // Intent filter for broadcast updates from BleService
+    private IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_GATT_LACTATESTAT_EVENT);
+        return intentFilter;
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(DEVICE_ADDRESS, mDeviceAddress);
+        outState.putParcelable(SELECTED_DEVICE, mSelectedDevice);
+        super.onSaveInstanceState(outState);
+    }
 }

@@ -24,10 +24,11 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:contentDescription="@string/lactatestat_logo_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/connection_info"
+        app:layout_constraintTop_toBottomOf="@+id/bl_not_connected"
         app:srcCompat="@drawable/lactatestat_splash_logo" />
 
     <Button
@@ -70,14 +71,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginRight="45dp"
         android:gravity="center_horizontal|center_vertical"
         android:text="@string/status_not_connected"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/secondaryTextColor"
+        android:textColor="#9F1414"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <Button
@@ -96,5 +98,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/connect_button" />
+
+    <ImageView
+        android:id="@+id/bl_not_connected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/connection_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_24"
+        android:contentDescription="@string/bluetooth_not_connected_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

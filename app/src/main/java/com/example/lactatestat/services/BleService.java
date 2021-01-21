@@ -19,6 +19,7 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.example.lactatestat.services.GattActions.*;
@@ -43,42 +44,73 @@ public class BleService extends Service {
     private String mBluetoothDeviceAddress;
     private BluetoothGatt mBluetoothGatt;
 
-    private BluetoothGattService mLactateStatService = null;
+    private BluetoothGattService mLactateStatBleService = null;
 
-    /**
-     * From https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service
-     * Connects to the GATT server hosted on the Bluetooth LE device.
-     *
-     * @param address The device address of the destination device.
-     * @return Return true if the connection is initiated successfully. The connection
-     * result is reported asynchronously through the
-     * {@code BluetoothGattCallback#onConnectionStateChange(...)} callback.
-     */
+
+    // Callback method for the BluetoothGatt
+    // From https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service with modifications
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public boolean connect(final String address) {
-        if (mBluetoothAdapter == null || address == null) {
-            Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
-            return false;
+    private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+        @Override
+        public void onConnectionStateChange(
+                BluetoothGatt gatt, int status, int newState) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                Log.i(TAG, "Connected to GATT server.");
+
+                broadcastLactateStatUpdate(Event.GATT_CONNECTED);
+                // attempt to discover services
+                mBluetoothGatt.discoverServices();
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                Log.i(TAG, "Disconnected from GATT server.");
+
+                broadcastLactateStatUpdate(Event.GATT_DISCONNECTED);
+            }
         }
 
-        // Previously connected device - try to reconnect
-        if (address.equals(mBluetoothDeviceAddress) && mBluetoothGatt != null) {
-            Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
-            return mBluetoothGatt.connect();
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+
+                broadcastLactateStatUpdate(Event.GATT_SERVICES_DISCOVERED);
+                logServices(gatt); // debug
+
+                // get the relevant service
+                mLactateStatBleService = gatt.getService(LACTATESTAT_SERVICE);
+
+
+                if (mLactateStatBleService != null) {
+                    broadcastLactateStatUpdate(Event.LACTATESTAT_SERVICE_DISCOVERED);
+                    logCharacteristics(mLactateStatBleService);
+
+                    // Enable notifications on the LactateStat measurements
+                    BluetoothGattCharacteristic lactateStatData =
+                            mLactateStatBleService.getCharacteristic(LACTATESTAT_MEASUREMENT);
+                    boolean result = setCharacteristicNotification(
+                            lactateStatData, true);
+                    Log.i(TAG, "setCharacteristicNotification" + result);
+
+                } else {
+                    broadcastLactateStatUpdate(Event.LACTATESTAT_SERVICE_NOT_AVAILABLE);
+                    Log.i(TAG, "No relevant service available");
+                }
+            }
         }
 
-        final BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-        if (device == null) {
-            Log.w(TAG, "Device not found.  Unable to connect.");
-            return false;
+        @Override
+        public void onCharacteristicChanged(BluetoothGatt gatt,
+                                            BluetoothGattCharacteristic characteristic) {
+
         }
-        // We want to directly connect to the device, so we are setting the autoConnect
-        // parameter to false.
-        mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
-        Log.d(TAG, "Trying to create a new connection.");
-        mBluetoothDeviceAddress = address;
-        return true;
-    }
+
+        @Override
+        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            super.onDescriptorWrite(gatt, descriptor, status);
+        }
+
+    };
 
     /**
      * From https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service
@@ -122,65 +154,40 @@ public class BleService extends Service {
         mBluetoothGatt = null;
     }
 
-
-    // Callback method for the BluetoothGatt
-    // From https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service with modifications
+    /**
+     * From https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service
+     * Connects to the GATT server hosted on the Bluetooth LE device.
+     *
+     * @param address The device address of the destination device.
+     * @return Return true if the connection is initiated successfully. The connection
+     * result is reported asynchronously through the
+     * {@code BluetoothGattCallback#onConnectionStateChange(...)} callback.
+     */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
-
-        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-        @Override
-        public void onConnectionStateChange(
-                BluetoothGatt gatt, int status, int newState) {
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.i(TAG, "Connected to GATT server.");
-
-                broadcastUpdate(Event.GATT_CONNECTED);
-                // attempt to discover services
-                mBluetoothGatt.discoverServices();
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.i(TAG, "Disconnected from GATT server.");
-
-                broadcastUpdate(Event.GATT_DISCONNECTED);
-            }
+    public boolean connect(final String address) {
+        if (mBluetoothAdapter == null || address == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
+            return false;
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-
-                broadcastUpdate(Event.GATT_SERVICES_DISCOVERED);
-                logServices(gatt); // debug
-
-                // get the LactateStat service
-                mLactateStatService = gatt.getService(LACTATESTAT_SERVICE);
-
-                if (mLactateStatService != null) {
-                    broadcastUpdate(Event.LACTATESTAT_SERVICE_DISCOVERED);
-                    logCharacteristics(mLactateStatService); // debug
-
-                    // Enable notifications on our LactateStat measurements
-                    BluetoothGattCharacteristic LactateStatData =
-                            mLactateStatService.getCharacteristic(LACTATESTAT_MEASUREMENT);
-                    boolean result = setCharacteristicNotification(
-                            LactateStatData, true);
-                    Log.i(TAG, "Enable characteristic notifications: " + result);
-                } else {
-                    broadcastUpdate(Event.LACTATESTAT_SERVICE_NOT_AVAILABLE);
-                    Log.i(TAG, "LactateStat service not available");
-                }
-            }
+        // Previously connected device - try to reconnect
+        if (address.equals(mBluetoothDeviceAddress) && mBluetoothGatt != null) {
+            Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
+            return mBluetoothGatt.connect();
         }
 
-        @Override
-        public void onCharacteristicChanged(BluetoothGatt gatt,
-                                            BluetoothGattCharacteristic characteristic) {
-
+        final BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        if (device == null) {
+            Log.w(TAG, "Device not found.  Unable to connect.");
+            return false;
         }
-
-    };
+        // We want to directly connect to the device, so we are setting the autoConnect
+        // parameter to false.
+        mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
+        Log.d(TAG, "Trying to create a new connection.");
+        mBluetoothDeviceAddress = address;
+        return true;
+    }
 
     /**
      * From https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service
@@ -212,18 +219,16 @@ public class BleService extends Service {
     From https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service
     Broadcast methods for events and data
      */
-    private void broadcastUpdate(final Event event) {
+    private void broadcastLactateStatUpdate(final Event event) {
         final Intent intent = new Intent(ACTION_GATT_LACTATESTAT_EVENT);
         intent.putExtra(EVENT, event);
         sendBroadcast(intent);
     }
 
-    // Broadcast the new LactateStat data to our Intent
-    // Based on https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service
-    private void broadcastLactateStatUpdate(final double[] elevation) {
+    private void broadcastLactateStatData (final int lactateStatData) {
         final Intent intent = new Intent(ACTION_GATT_LACTATESTAT_EVENT);
         intent.putExtra(EVENT, Event.DATA_AVAILABLE);
-        intent.putExtra(LACTATESTAT_DATA, elevation);
+        intent.putExtra(LACTATESTAT_DATA, lactateStatData);
         sendBroadcast(intent);
     }
 
@@ -252,9 +257,10 @@ public class BleService extends Service {
         // After using a given device, you should make sure that BluetoothGatt.close()
         // is called such that resources are cleaned up properly.  In this particular
         // example, close() is invoked when the UI is disconnected from the Service.
-        close();
+        //close();
         return super.onUnbind(intent);
     }
+
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -282,6 +288,4 @@ public class BleService extends Service {
             Log.i(TAG, "characteristic: " + uuid);
         }
     }
-
-
 }
