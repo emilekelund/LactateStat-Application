@@ -22,15 +22,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lactatestat.R;
-import com.example.lactatestat.adapters.bleDeviceAdapter;
+import com.example.lactatestat.adapters.BleDeviceAdapter;
 import com.example.lactatestat.utilities.MessageUtils;
 
 import java.util.ArrayList;
@@ -40,8 +38,8 @@ import static android.bluetooth.le.ScanSettings.CALLBACK_TYPE_ALL_MATCHES;
 import static com.example.lactatestat.services.LactateStatUUIDs.LACTATESTAT_SERVICE;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class bleScanDialog extends Activity {
-    private static final String TAG = bleScanDialog.class.getSimpleName();
+public class BleScanDialog extends Activity {
+    private static final String TAG = BleScanDialog.class.getSimpleName();
 
     public static final int REQUEST_ENABLE_BT = 1000;
     public static final int REQUEST_ACCESS_LOCATION = 1001;
@@ -54,7 +52,7 @@ public class bleScanDialog extends Activity {
     private TextView mScanInfoView;
 
     private ArrayList<BluetoothDevice> mDeviceList;
-    private bleDeviceAdapter mBtDeviceAdapter;
+    private BleDeviceAdapter mBtDeviceAdapter;
 
     private static final long SCAN_PERIOD = 15000; // 15 seconds
 
@@ -87,8 +85,8 @@ public class bleScanDialog extends Activity {
         RecyclerView recyclerView = findViewById(R.id.scan_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        mBtDeviceAdapter = new bleDeviceAdapter(mDeviceList,
-                new bleDeviceAdapter.IOnItemSelectedCallBack() {
+        mBtDeviceAdapter = new BleDeviceAdapter(mDeviceList,
+                new BleDeviceAdapter.IOnItemSelectedCallBack() {
                     @Override
                     public void onItemClicked(int position) {
                         onDeviceSelected(position);
@@ -161,7 +159,7 @@ public class bleScanDialog extends Activity {
                         if (mScanning) {
                             mScanning = false;
                             scanner.stopScan(mScanCallback);
-                            MessageUtils.showToast("BLE scan stopped", bleScanDialog.this);
+                            MessageUtils.showToast("BLE scan stopped", BleScanDialog.this);
                         }
                     }
                 }, SCAN_PERIOD);
@@ -225,7 +223,7 @@ public class bleScanDialog extends Activity {
     private void onDeviceSelected(int position) {
         BluetoothDevice selectedDevice = mDeviceList.get(position);
 
-        Intent intent = new Intent(bleScanDialog.this, DashboardActivity.class);
+        Intent intent = new Intent(BleScanDialog.this, DashboardActivity.class);
         intent.putExtra(SELECTED_DEVICE, selectedDevice);
         setResult(RESULT_OK, intent);
         finish();

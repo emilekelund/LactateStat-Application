@@ -13,7 +13,7 @@ import com.example.lactatestat.R;
 
 import java.util.List;
 
-public class bleDeviceAdapter extends RecyclerView.Adapter<bleDeviceAdapter.ViewHolder> {
+public class BleDeviceAdapter extends RecyclerView.Adapter<BleDeviceAdapter.ViewHolder> {
     private List<BluetoothDevice> mDeviceList;
 
     // interface for callbacks when item selected
@@ -22,8 +22,8 @@ public class bleDeviceAdapter extends RecyclerView.Adapter<bleDeviceAdapter.View
     }
     private IOnItemSelectedCallBack mOnItemSelectedCallback;
 
-    public bleDeviceAdapter(List<BluetoothDevice> deviceList,
-                           IOnItemSelectedCallBack onItemSelectedCallBack) {
+    public BleDeviceAdapter(List<BluetoothDevice> deviceList,
+                            IOnItemSelectedCallBack onItemSelectedCallBack) {
         super();
         mDeviceList = deviceList;
         mOnItemSelectedCallback = onItemSelectedCallBack;
@@ -32,7 +32,7 @@ public class bleDeviceAdapter extends RecyclerView.Adapter<bleDeviceAdapter.View
 
     @NonNull
     @Override
-    public bleDeviceAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BleDeviceAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Create a new item view
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.scan_result_item, parent, false);

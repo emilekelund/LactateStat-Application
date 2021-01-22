@@ -10,7 +10,6 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,7 +25,6 @@ import com.example.lactatestat.services.BleService;
 import com.example.lactatestat.services.GattActions;
 import com.example.lactatestat.utilities.MessageUtils;
 
-import java.io.IOException;
 import java.util.Objects;
 
 import static com.example.lactatestat.services.GattActions.ACTION_GATT_LACTATESTAT_EVENT;
@@ -34,7 +32,7 @@ import static com.example.lactatestat.services.GattActions.EVENT;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private static final String TAG = bleScanDialog.class.getSimpleName();
+    private static final String TAG = BleScanDialog.class.getSimpleName();
     private static final String DEVICE_ADDRESS = "deviceAddress";
     private static final String SELECTED_DEVICE = "selectedDevice";
 
@@ -121,7 +119,7 @@ public class DashboardActivity extends AppCompatActivity {
     };
 
     public void startBleSearch(View view) {
-        Intent start_scan = new Intent(DashboardActivity.this, bleScanDialog.class);
+        Intent start_scan = new Intent(DashboardActivity.this, BleScanDialog.class);
         startActivityForResult(start_scan, SCAN_DEVICE_REQUEST);
     }
 
@@ -135,7 +133,7 @@ public class DashboardActivity extends AppCompatActivity {
                                     Intent data) {
         if (requestCode == SCAN_DEVICE_REQUEST) {
             if (resultCode == RESULT_OK) {
-                mSelectedDevice = data.getParcelableExtra(bleScanDialog.SELECTED_DEVICE);
+                mSelectedDevice = data.getParcelableExtra(BleScanDialog.SELECTED_DEVICE);
                 if (mSelectedDevice == null) {
                     MessageUtils.createDialog("Error", "No device found", this).show();
                 } else {

@@ -27,7 +27,7 @@
         </activity>
         <activity android:name=".activities.DashboardActivity"/>
         <activity
-            android:name=".activities.bleScanDialog"
+            android:name=".activities.BleScanDialog"
             android:theme="@android:style/Theme.Material.Light.Dialog.NoActionBar"
             tools:targetApi="lollipop" />
         <service android:name="com.example.lactatestat.services.BleService" />
