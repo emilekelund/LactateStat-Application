@@ -210,7 +210,6 @@ public class DashboardActivity extends AppCompatActivity {
         if (mSelectedDevice != null && !mStatusView.getText().toString().equals("LactateStat not connected")) {
             Log.d(TAG, "status view: " + mStatusView.getText().toString());
             startSession.putExtra(SELECTED_DEVICE, mSelectedDevice);
-            startSession.putExtra(DEVICE_ADDRESS, mDeviceAddress);
             startActivity(startSession);
         } else {
             Dialog alert = createDialog("Error", "Please connect to LactateStat First", this);
