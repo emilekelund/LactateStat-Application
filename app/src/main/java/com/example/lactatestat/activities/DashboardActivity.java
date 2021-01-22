@@ -1,5 +1,7 @@
 package com.example.lactatestat.activities;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -19,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import com.example.lactatestat.R;
 import com.example.lactatestat.services.BleService;
@@ -29,6 +32,7 @@ import java.util.Objects;
 
 import static com.example.lactatestat.services.GattActions.ACTION_GATT_LACTATESTAT_EVENT;
 import static com.example.lactatestat.services.GattActions.EVENT;
+import static com.example.lactatestat.utilities.MessageUtils.createDialog;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -119,8 +123,8 @@ public class DashboardActivity extends AppCompatActivity {
     };
 
     public void startBleSearch(View view) {
-        Intent start_scan = new Intent(DashboardActivity.this, BleScanDialog.class);
-        startActivityForResult(start_scan, SCAN_DEVICE_REQUEST);
+        Intent startScan = new Intent(DashboardActivity.this, BleScanDialog.class);
+        startActivityForResult(startScan, SCAN_DEVICE_REQUEST);
     }
 
     public void startBleService() {
@@ -139,7 +143,7 @@ public class DashboardActivity extends AppCompatActivity {
                 } else {
                     mStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
                     mStatusView.setTextColor(getResources().getColor(R.color.connectedColor));
-                    mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_connected_35));
+                    mStatusIconView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_bluetooth_connected_35));
                     mDeviceAddress = mSelectedDevice.getAddress();
                     Log.i(TAG, "DeviceAddress: " + mDeviceAddress);
                     startBleService();
@@ -164,22 +168,22 @@ public class DashboardActivity extends AppCompatActivity {
                         case DATA_AVAILABLE:
                             mStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
                             mStatusView.setTextColor(getResources().getColor(R.color.connectedColor));
-                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_connected_35));
+                            mStatusIconView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_baseline_bluetooth_connected_35));
                             break;
                         case GATT_DISCONNECTED:
                             mStatusView.setText(R.string.status_not_connected);
                             mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
-                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_35));
+                            mStatusIconView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_baseline_bluetooth_disabled_35));
                             break;
                         case LACTATESTAT_SERVICE_NOT_AVAILABLE:
                             mStatusView.setText(event.toString());
                             mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
-                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_35));
+                            mStatusIconView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_baseline_bluetooth_disabled_35));
                             break;
                         default:
                             mStatusView.setText(R.string.device_unreachable);
                             mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
-                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_35));
+                            mStatusIconView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_baseline_bluetooth_disabled_35));
                             break;
                     }
                 }
@@ -199,5 +203,19 @@ public class DashboardActivity extends AppCompatActivity {
         outState.putString(DEVICE_ADDRESS, mDeviceAddress);
         outState.putParcelable(SELECTED_DEVICE, mSelectedDevice);
         super.onSaveInstanceState(outState);
+    }
+
+    public void startNewSession(View view) {
+        Intent startSession = new Intent(this, SessionActivity.class);
+        if (mSelectedDevice != null && !mStatusView.getText().toString().equals("LactateStat not connected")) {
+            Log.d(TAG, "status view: " + mStatusView.getText().toString());
+            startSession.putExtra(SELECTED_DEVICE, mSelectedDevice);
+            startSession.putExtra(DEVICE_ADDRESS, mDeviceAddress);
+            startActivity(startSession);
+        } else {
+            Dialog alert = createDialog("Error", "Please connect to LactateStat First", this);
+            alert.show();
+        }
+
     }
 }
