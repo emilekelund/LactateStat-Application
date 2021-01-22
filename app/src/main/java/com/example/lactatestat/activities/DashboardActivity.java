@@ -139,7 +139,7 @@ public class DashboardActivity extends AppCompatActivity {
                 } else {
                     mStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
                     mStatusView.setTextColor(getResources().getColor(R.color.connectedColor));
-                    mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_connected_24));
+                    mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_connected_35));
                     mDeviceAddress = mSelectedDevice.getAddress();
                     Log.i(TAG, "DeviceAddress: " + mDeviceAddress);
                     startBleService();
@@ -164,22 +164,22 @@ public class DashboardActivity extends AppCompatActivity {
                         case DATA_AVAILABLE:
                             mStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
                             mStatusView.setTextColor(getResources().getColor(R.color.connectedColor));
-                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_connected_24));
+                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_connected_35));
                             break;
                         case GATT_DISCONNECTED:
                             mStatusView.setText(R.string.status_not_connected);
                             mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
-                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_24));
+                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_35));
                             break;
                         case LACTATESTAT_SERVICE_NOT_AVAILABLE:
                             mStatusView.setText(event.toString());
                             mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
-                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_24));
+                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_35));
                             break;
                         default:
                             mStatusView.setText(R.string.device_unreachable);
                             mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
-                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_24));
+                            mStatusIconView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_bluetooth_disabled_35));
                             break;
                     }
                 }

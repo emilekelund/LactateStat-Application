@@ -30,6 +30,7 @@
             android:name=".activities.BleScanDialog"
             android:theme="@android:style/Theme.Material.Light.Dialog.NoActionBar"
             tools:targetApi="lollipop" />
+        <activity android:name=".activities.SessionActivity"/>
         <service android:name="com.example.lactatestat.services.BleService" />
     </application>
 

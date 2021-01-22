@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -42,7 +40,7 @@
         android:textColor="@color/secondaryTextColor"
         app:backgroundTint="@color/white"
         app:backgroundTintMode="add"
-        app:icon="@drawable/ic_baseline_bluetooth_24"
+        app:icon="@drawable/ic_baseline_bluetooth_60"
         app:iconTint="#2196F3"
         app:iconTintMode="src_in"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +58,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/secondaryTextColor"
         app:backgroundTint="#FFFFFF"
-        app:icon="@drawable/ic_baseline_show_chart_24"
+        app:icon="@drawable/ic_baseline_show_chart_60"
         app:iconTint="#009688"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +91,7 @@
         android:textColor="@color/secondaryTextColor"
         app:backgroundTint="@color/white"
         app:backgroundTintMode="add"
-        app:icon="@drawable/ic_baseline_directions_run_24"
+        app:icon="@drawable/ic_baseline_directions_run_60"
         app:iconTint="#FF5722"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -109,7 +107,7 @@
         app:layout_constraintEnd_toStartOf="@+id/connection_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_24"
-        android:contentDescription="@string/bluetooth_not_connected_description" />
+        app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_35"
+        android:contentDescription="@string/ble_connection_status_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

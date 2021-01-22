@@ -9,5 +9,15 @@
     <string name="cancel_search">Cancel search</string>
     <string name="new_session">New Session</string>
     <string name="device_unreachable">Device unreachable</string>
-    <string name="bluetooth_not_connected_description">bluetooth_not_connected</string>
+    <string name="ble_connection_status_icon">BLE connection status icon</string>
+    <string name="no_data">No Data</string>
+    <string name="pause_saving">Pause Saving</string>
+    <string name="continue_saving">Continue Saving</string>
+    <string name="time_s">Time [s]</string>
+    <string name="current_na">Current [nA]</string>
+    <string name="save_data">Save Data</string>
+    <string name="stop_save">Stop Save</string>
+    <string name="select_graph_unit">Select Graph Unit</string>
+    <string name="current">Current</string>
+    <string name="lactate">Lactate</string>
 </resources>

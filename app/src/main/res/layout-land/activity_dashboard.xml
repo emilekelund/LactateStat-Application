@@ -43,7 +43,7 @@
         android:textColor="@color/secondaryTextColor"
         app:backgroundTint="@color/white"
         app:backgroundTintMode="add"
-        app:icon="@drawable/ic_baseline_bluetooth_24"
+        app:icon="@drawable/ic_baseline_bluetooth_60"
         app:iconTint="#2196F3"
         app:iconTintMode="src_in"
         app:layout_constraintBottom_toTopOf="@+id/new_session_button"
@@ -60,7 +60,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/secondaryTextColor"
         app:backgroundTint="#FFFFFF"
-        app:icon="@drawable/ic_baseline_show_chart_24"
+        app:icon="@drawable/ic_baseline_show_chart_60"
         app:iconTint="#009688"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -91,7 +91,7 @@
         android:textColor="@color/secondaryTextColor"
         app:backgroundTint="@color/white"
         app:backgroundTintMode="add"
-        app:icon="@drawable/ic_baseline_directions_run_24"
+        app:icon="@drawable/ic_baseline_directions_run_60"
         app:iconTint="#FF5722"
         app:layout_constraintBottom_toTopOf="@+id/history_button"
         app:layout_constraintEnd_toEndOf="parent"
@@ -108,6 +108,6 @@
         android:contentDescription="@string/bluetooth_not_connected_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_24" />
+        app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_35" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

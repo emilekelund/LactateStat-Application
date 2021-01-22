@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/primaryColor"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <TextView
+        android:id="@+id/status_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginRight="45dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="@string/status_not_connected"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#9F1414"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/status_icon"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <ImageView
+        android:id="@+id/status_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/status_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_35"
+        android:contentDescription="@string/ble_connection_status_icon" />
+
+    <TextView
+        android:id="@+id/current_data"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="@string/no_data"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/save_data_switch"
+        app:layout_constraintEnd_toStartOf="@+id/lactate_data"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/status_info" />
+
+    <TextView
+        android:id="@+id/lactate_data"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="@string/no_data"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/save_data_switch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/current_data"
+        app:layout_constraintTop_toBottomOf="@+id/status_info" />
+
+    <View
+        android:id="@+id/vertical_divider"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@color/secondaryDarkColor"
+        app:layout_constraintBottom_toBottomOf="@+id/lactate_data"
+        app:layout_constraintEnd_toStartOf="@+id/lactate_data"
+        app:layout_constraintStart_toEndOf="@+id/current_data"
+        app:layout_constraintTop_toTopOf="@+id/lactate_data" />
+
+    <ToggleButton
+        android:id="@+id/pause_save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@color/white"
+        android:drawableLeft="@drawable/ic_baseline_pause_24"
+        android:textColor="@color/secondaryTextColor"
+        android:textOff="@string/pause_saving"
+        android:textOn="@string/continue_saving"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/lactatestat_chart"
+        app:layout_constraintEnd_toEndOf="@+id/save_data_switch"
+        app:layout_constraintStart_toStartOf="@+id/save_data_switch"
+        android:drawableStart="@drawable/ic_baseline_pause_24" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lactatestat_chart"
+        android:layout_width="365dp"
+        android:layout_height="350dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_axis_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/bottom_axis_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/time_s"
+        android:textColor="@color/secondaryTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/lactatestat_chart"
+        app:layout_constraintStart_toStartOf="@+id/lactatestat_chart" />
+
+    <TextView
+        android:id="@+id/left_axis_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="364dp"
+        android:layout_marginRight="364dp"
+        android:rotation="270"
+        android:text="@string/current_na"
+        android:textColor="@color/secondaryTextColor"
+        app:layout_constraintBottom_toBottomOf="@+id/lactatestat_chart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/lactatestat_chart" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/save_data_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:drawableLeft="@drawable/ic_baseline_save_24"
+        android:text="@string/save_data"
+        android:textColor="@color/secondaryTextColor"
+        android:textOff="@string/save_data"
+        android:textOn="@string/stop_save"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/pause_save_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/graph_info_text"
+        android:drawableStart="@drawable/ic_baseline_save_24" />
+
+    <TextView
+        android:id="@+id/graph_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="@string/select_graph_unit"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/toggle_graph_unit"
+        app:layout_constraintEnd_toStartOf="@+id/save_data_switch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/save_data_switch"
+        app:drawableLeftCompat="@drawable/ic_baseline_auto_graph_24" />
+
+    <ToggleButton
+        android:id="@+id/toggle_graph_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@color/white"
+        android:drawableLeft="@drawable/ic_baseline_power_24"
+        android:textColor="@color/secondaryTextColor"
+        android:textOff="@string/current"
+        android:textOn="@string/lactate"
+        app:layout_constraintBottom_toTopOf="@+id/lactatestat_chart"
+        app:layout_constraintEnd_toEndOf="@+id/graph_info_text"
+        app:layout_constraintStart_toStartOf="@+id/graph_info_text"
+        app:layout_constraintTop_toTopOf="@+id/pause_save_button"
+        android:drawableStart="@drawable/ic_baseline_power_24" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
