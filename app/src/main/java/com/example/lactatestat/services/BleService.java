@@ -19,6 +19,8 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.example.lactatestat.utilities.BitConverter;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,14 +82,12 @@ public class BleService extends Service {
                 // get the relevant service
                 mLactateStatBleService = gatt.getService(LACTATESTAT_SERVICE);
 
-
                 if (mLactateStatBleService != null) {
                     broadcastLactateStatUpdate(Event.LACTATESTAT_SERVICE_DISCOVERED);
                     logCharacteristics(mLactateStatBleService);
 
                     // Enable notifications on the LactateStat measurements
-                    BluetoothGattCharacteristic lactateStatData =
-                            mLactateStatBleService.getCharacteristic(LACTATESTAT_MEASUREMENT);
+                    BluetoothGattCharacteristic lactateStatData = mLactateStatBleService.getCharacteristic(LACTATESTAT_MEASUREMENT);
                     boolean result = setCharacteristicNotification(
                             lactateStatData, true);
                     Log.i(TAG, "setCharacteristicNotification" + result);
@@ -102,7 +102,15 @@ public class BleService extends Service {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
+            // Copy the received byte array so we have a threadsafe copy
+            byte[] rawData = new byte[characteristic.getValue().length];
 
+            System.arraycopy(characteristic.getValue(), 0, rawData, 0,
+                    characteristic.getValue().length);
+            Log.i("rawData: ", Arrays.toString(rawData));
+
+            int adcValue = BitConverter.bytesToInt(rawData);
+            broadcastLactateStatData(adcValue);
         }
 
         @Override
@@ -225,7 +233,7 @@ public class BleService extends Service {
         sendBroadcast(intent);
     }
 
-    private void broadcastLactateStatData (final int lactateStatData) {
+    private void broadcastLactateStatData(final int lactateStatData) {
         final Intent intent = new Intent(ACTION_GATT_LACTATESTAT_EVENT);
         intent.putExtra(EVENT, Event.DATA_AVAILABLE);
         intent.putExtra(LACTATESTAT_DATA, lactateStatData);
@@ -257,7 +265,7 @@ public class BleService extends Service {
         // After using a given device, you should make sure that BluetoothGatt.close()
         // is called such that resources are cleaned up properly.  In this particular
         // example, close() is invoked when the UI is disconnected from the Service.
-        //close();
+        close();
         return super.onUnbind(intent);
     }
 
@@ -265,9 +273,9 @@ public class BleService extends Service {
     private final IBinder mBinder = new LocalBinder();
 
     /*
-    From https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service
-    logging and debugging
-     */
+        From https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service
+        logging and debugging
+         */
     private final static String TAG = BleService.class.getSimpleName();
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)

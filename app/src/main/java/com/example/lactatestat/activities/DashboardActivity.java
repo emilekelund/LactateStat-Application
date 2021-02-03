@@ -86,6 +86,10 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mGattUpdateReceiver);
+        if (mBluetoothLeService != null) {
+            unbindService(mServiceConnection);
+            mBluetoothLeService = null;
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
