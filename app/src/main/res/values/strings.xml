@@ -20,4 +20,5 @@
     <string name="select_graph_unit">Select Graph Unit</string>
     <string name="current">Current</string>
     <string name="lactate">Lactate</string>
+    <string name="ready_to_start">Ready to start new session</string>
 </resources>
