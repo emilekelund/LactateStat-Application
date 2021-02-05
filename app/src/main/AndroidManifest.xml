@@ -31,6 +31,7 @@
             android:theme="@android:style/Theme.Material.Light.Dialog.NoActionBar"
             tools:targetApi="lollipop" />
         <activity android:name=".activities.SessionActivity"/>
+        <activity android:name=".activities.PreStartSettingsActivity"/>
         <service android:name="com.example.lactatestat.services.BleService" />
     </application>
 

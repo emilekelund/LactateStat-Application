@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="bias_voltage_array">
+        <item>0 mV</item>
+        <item>33 mV</item>
+        <item>66 mV</item>
+        <item>132 mV</item>
+        <item>198 mV</item>
+        <item>264 mV</item>
+        <item>330 mV</item>
+        <item>396 mV</item>
+        <item>462 mV</item>
+        <item>528 mV</item>
+        <item>594 mV</item>
+        <item>660 mV</item>
+        <item>726 mV</item>
+        <item>792 mV</item>
+    </string-array>
+</resources>

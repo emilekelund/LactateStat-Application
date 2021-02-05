@@ -1,46 +1,33 @@
 package com.example.lactatestat.activities;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import com.example.lactatestat.R;
-import com.example.lactatestat.services.BleService;
-import com.example.lactatestat.services.GattActions;
 import com.example.lactatestat.utilities.MessageUtils;
 
 import java.util.Objects;
 
-import static com.example.lactatestat.services.GattActions.ACTION_GATT_LACTATESTAT_EVENT;
-import static com.example.lactatestat.services.GattActions.EVENT;
 import static com.example.lactatestat.utilities.MessageUtils.createDialog;
 
 public class DashboardActivity extends AppCompatActivity {
 
     private static final String TAG = BleScanDialog.class.getSimpleName();
-    private static final String DEVICE_ADDRESS = "deviceAddress";
     private static final String SELECTED_DEVICE = "selectedDevice";
 
-    private BluetoothDevice mSelectedDevice;
+    private BluetoothDevice mSelectedDevice = null;
     private TextView mStatusView;
     private String mDeviceAddress;
     private ImageView mStatusIconView;
@@ -56,12 +43,9 @@ public class DashboardActivity extends AppCompatActivity {
         mStatusView = findViewById(R.id.connection_info);
         mStatusIconView = findViewById(R.id.bl_status_icon);
 
-        if (savedInstanceState != null) {
-            mDeviceAddress = savedInstanceState.getString(DEVICE_ADDRESS);
-            mSelectedDevice = savedInstanceState.getParcelable(SELECTED_DEVICE);
-        } else {
-            mSelectedDevice = null;
-        }
+        mStatusView.setText(R.string.status_not_connected);
+        mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
+        mStatusIconView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_bluetooth_disabled_35));
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -70,19 +54,11 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
+        mStatusView.setText(R.string.status_not_connected);
+        mStatusView.setTextColor(getResources().getColor(R.color.disconnectedColor));
+        mStatusIconView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_bluetooth_disabled_35));
     }
 
     public void startBleSearch(View view) {
@@ -108,13 +84,6 @@ public class DashboardActivity extends AppCompatActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString(DEVICE_ADDRESS, mDeviceAddress);
-        outState.putParcelable(SELECTED_DEVICE, mSelectedDevice);
-        super.onSaveInstanceState(outState);
     }
 
     public void startNewSession(View view) {

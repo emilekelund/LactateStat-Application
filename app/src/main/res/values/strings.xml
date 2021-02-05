@@ -21,4 +21,7 @@
     <string name="current">Current</string>
     <string name="lactate">Lactate</string>
     <string name="ready_to_start">Ready to start new session</string>
+    <string name="bias_voltage_mv">Bias Voltage (mV):</string>
+    <string name="default_settings_loaded">Default settings loaded</string>
+    <string name="start_session">Start session</string>
 </resources>
