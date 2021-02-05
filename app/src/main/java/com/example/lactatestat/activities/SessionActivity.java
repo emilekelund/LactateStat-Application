@@ -244,8 +244,9 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
                         case DATA_AVAILABLE:
                             final int adcValue = intent.getIntExtra(LACTATESTAT_DATA, 0);
                             double voltage = adcValue / 1.13777777778;
+                            double current = (voltage - (3600 * 0.2)) / 350000;
                             mVoltageView.setText(String.format("%.2f mV", voltage));
-                            mCurrentView.setText("-");
+                            mCurrentView.setText(String.format("%.0f nA", current * Math.pow(10, 6)));
                             break;
                         case GATT_DISCONNECTED:
                             mConnectionStatusView.setText(R.string.status_not_connected);
