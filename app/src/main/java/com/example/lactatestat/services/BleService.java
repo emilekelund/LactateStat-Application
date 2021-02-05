@@ -45,8 +45,20 @@ public class BleService extends Service {
     private BluetoothAdapter mBluetoothAdapter;
     private String mBluetoothDeviceAddress;
     private BluetoothGatt mBluetoothGatt;
+    private int biasValue = 6;
 
-    private BluetoothGattService mLactateStatBleService = null;
+    private BluetoothGattService mLactateStatBleService;
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        biasValue = intent.getIntExtra("BiasValue", 0);
+        Log.i(TAG, "BiasValue: " + biasValue);
+
+        setBiasValue(biasValue);
+
+        return START_STICKY;
+    }
 
 
     // Callback method for the BluetoothGatt
@@ -116,6 +128,8 @@ public class BleService extends Service {
         @Override
         public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
             super.onDescriptorWrite(gatt, descriptor, status);
+            boolean setBias = setBiasValue(3);
+            Log.i(TAG, "SetRegister: " + setBias);
         }
 
     };
@@ -221,6 +235,21 @@ public class BleService extends Service {
         descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         mBluetoothGatt.writeDescriptor(descriptor);
         return result;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public boolean setBiasValue(int biasValue) {
+        if (mBluetoothAdapter == null && mBluetoothGatt == null) {
+            Log.i(TAG, "BluetoothAdapter not initialized");
+            return false;
+        }
+
+        BluetoothGattCharacteristic settingsCharacteristic =
+                mLactateStatBleService.getCharacteristic(LACTATESTAT_SETTINGS);
+        boolean setVal = settingsCharacteristic.setValue(biasValue, BluetoothGattCharacteristic.FORMAT_UINT32, 0);
+        Log.i(TAG,"SetValue: " + setVal);
+
+        return mBluetoothGatt.writeCharacteristic(settingsCharacteristic);
     }
 
     /*

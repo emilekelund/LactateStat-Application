@@ -50,7 +50,7 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     private String mDeviceAddress;
 
     private TextView mCurrentView;
-    private TextView mLactateView;
+    private TextView mVoltageView;
     private TextView mConnectionStatusView;
     private ImageView mStatusIcon;
     private TextView mLeftAxisLabel;
@@ -61,14 +61,12 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     private int mBiasVoltageIndex;
     private int mBiasPolarityIndex;
 
-    private int tiacnRegister = 27;
-    private int refcnRegister = 22;
-    private int modecnRegister = 3;
-
     private ILineDataSet set = null;
     private LineChart mChart;
     private Thread mThread;
     private static boolean plotData = true;
+
+    private boolean connected = false;
 
     private long timeSinceSamplingStart = 0;
 
@@ -106,7 +104,7 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         });
 
         mCurrentView = findViewById(R.id.current_data);
-        mLactateView = findViewById(R.id.voltage_data);
+        mVoltageView = findViewById(R.id.voltage_data);
         mConnectionStatusView = findViewById(R.id.status_info);
         mStatusIcon = findViewById(R.id.status_icon);
         mLeftAxisLabel = findViewById(R.id.left_axis_label);
@@ -141,13 +139,6 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         mBiasVoltageSpinner.setSelection(mBiasVoltageIndex);
         mBiasPolaritySpinner.setSelection(mBiasPolarityIndex);
 
-        // Update the refcn register and send to board
-        // Update with the settings from previous activity
-        refcnRegister &= ~(0x1F); // Clear first five bits
-        refcnRegister |= mBiasVoltageIndex;
-        refcnRegister |= ((mBiasPolarityIndex << 4) | mBiasVoltageIndex);
-        // Now write to the characteristic
-
         if (mSelectedDevice == null) {
             Dialog alert = createDialog("Error", "No LactateStat board connected", this);
             alert.show();
@@ -157,7 +148,6 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
 
         Intent mGattServiceIntent = new Intent(this, BleService.class);
         bindService(mGattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -198,6 +188,10 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         // parent.getItemAtPosition(pos)
         mBiasVoltageIndex = mBiasVoltageSpinner.getSelectedItemPosition();
         mBiasPolarityIndex = mBiasPolaritySpinner.getSelectedItemPosition();
+        Log.i(TAG, "OnItemSelected: " + mBiasVoltageIndex);
+        if (connected) {
+            setBiasValue(mBiasVoltageIndex);
+        }
     }
 
     @Override
@@ -245,9 +239,13 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
                             mConnectionStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
                             mConnectionStatusView.setTextColor(getResources().getColor(R.color.connectedColor));
                             mStatusIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_baseline_bluetooth_connected_35));
+                            connected = true;
+                            break;
                         case DATA_AVAILABLE:
                             final int adcValue = intent.getIntExtra(LACTATESTAT_DATA, 0);
-                            mCurrentView.setText(String.format("%d", adcValue));
+                            double voltage = adcValue / 1.13777777778;
+                            mVoltageView.setText(String.format("%.2f mV", voltage));
+                            mCurrentView.setText("-");
                             break;
                         case GATT_DISCONNECTED:
                             mConnectionStatusView.setText(R.string.status_not_connected);
@@ -275,5 +273,11 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_GATT_LACTATESTAT_EVENT);
         return intentFilter;
+    }
+
+    public void setBiasValue(int biasValue) {
+        final Intent intent = new Intent(this, BleService.class);
+        intent.putExtra("BiasValue", biasValue);
+        this.startService(intent);
     }
 }
