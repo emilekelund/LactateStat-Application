@@ -59,12 +59,12 @@
         android:textColor="@color/secondaryTextColor"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/save_data_switch"
-        app:layout_constraintEnd_toStartOf="@+id/lactate_data"
+        app:layout_constraintEnd_toStartOf="@+id/voltage_data"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/status_info" />
 
     <TextView
-        android:id="@+id/lactate_data"
+        android:id="@+id/voltage_data"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
@@ -83,10 +83,10 @@
         android:layout_width="1dp"
         android:layout_height="0dp"
         android:background="#0097A7"
-        app:layout_constraintBottom_toBottomOf="@+id/lactate_data"
-        app:layout_constraintEnd_toStartOf="@+id/lactate_data"
+        app:layout_constraintBottom_toBottomOf="@+id/voltage_data"
+        app:layout_constraintEnd_toStartOf="@+id/voltage_data"
         app:layout_constraintStart_toEndOf="@+id/current_data"
-        app:layout_constraintTop_toTopOf="@+id/lactate_data" />
+        app:layout_constraintTop_toTopOf="@+id/voltage_data" />
 
     <View
         android:id="@+id/horizontal_divider"
@@ -110,10 +110,11 @@
         android:id="@+id/pause_save_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="58dp"
         android:background="@color/white"
         android:drawableStart="@drawable/ic_baseline_pause_24"
         android:drawableLeft="@drawable/ic_baseline_pause_24"
+        android:paddingEnd="4dp"
         android:paddingRight="4dp"
         android:textColor="@color/secondaryTextColor"
         android:textOff="@string/pause_saving"
@@ -122,13 +123,12 @@
         app:layout_constraintBottom_toTopOf="@+id/lactatestat_chart"
         app:layout_constraintEnd_toEndOf="@+id/save_data_switch"
         app:layout_constraintStart_toStartOf="@+id/save_data_switch"
-        android:paddingEnd="4dp"
         tools:ignore="RtlSymmetry" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/lactatestat_chart"
         android:layout_width="365dp"
-        android:layout_height="350dp"
+        android:layout_height="320dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
@@ -201,19 +201,54 @@
         android:id="@+id/toggle_graph_unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:background="@color/white"
         android:drawableStart="@drawable/ic_baseline_power_24"
         android:drawableLeft="@drawable/ic_baseline_power_24"
+        android:paddingEnd="4dp"
         android:paddingRight="4dp"
         android:textColor="@color/secondaryTextColor"
         android:textOff="@string/current"
         android:textOn="@string/lactate"
-        app:layout_constraintBottom_toTopOf="@+id/lactatestat_chart"
         app:layout_constraintEnd_toEndOf="@+id/graph_info_text"
         app:layout_constraintStart_toStartOf="@+id/graph_info_text"
         app:layout_constraintTop_toTopOf="@+id/pause_save_button"
-        android:paddingEnd="4dp"
         tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/bias_voltage_static"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="@string/bias_voltage_mv"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/session_bias_voltage_Spinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toggle_graph_unit" />
+
+    <Spinner
+        android:id="@+id/session_bias_voltage_Spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/bias_voltage_static"
+        app:layout_constraintEnd_toStartOf="@+id/session_bias_polarity_spinner"
+        app:layout_constraintStart_toEndOf="@+id/bias_voltage_static"
+        app:layout_constraintTop_toTopOf="@+id/bias_voltage_static" />
+
+    <Spinner
+        android:id="@+id/session_bias_polarity_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/session_bias_voltage_Spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/session_bias_voltage_Spinner"
+        app:layout_constraintTop_toTopOf="@+id/session_bias_voltage_Spinner" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

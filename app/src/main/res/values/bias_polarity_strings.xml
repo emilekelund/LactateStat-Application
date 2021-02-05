@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="bias_polarity_array">
+        <item>Negative</item>
+        <item>Positive</item>
+    </string-array>
+</resources>

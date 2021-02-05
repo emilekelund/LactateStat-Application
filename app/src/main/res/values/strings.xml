@@ -24,4 +24,6 @@
     <string name="bias_voltage_mv">Bias Voltage (mV):</string>
     <string name="default_settings_loaded">Default settings loaded</string>
     <string name="start_session">Start session</string>
+    <string name="bias_polarity">Bias polarity:</string>
+    <string name="polarity">Polarity:</string>
 </resources>

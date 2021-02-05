@@ -87,11 +87,11 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     public void startNewSession(View view) {
-        Intent startSession = new Intent(this, SessionActivity.class);
+        Intent startSettings = new Intent(this, PreStartSettingsActivity.class);
         if (mSelectedDevice != null && !mStatusView.getText().toString().equals("LactateStat not connected")) {
             Log.d(TAG, "status view: " + mStatusView.getText().toString());
-            startSession.putExtra(SELECTED_DEVICE, mSelectedDevice);
-            startActivity(startSession);
+            startSettings.putExtra(SELECTED_DEVICE, mSelectedDevice);
+            startActivity(startSettings);
         } else {
             Dialog alert = createDialog("Error", "Please connect to LactateStat First", this);
             alert.show();

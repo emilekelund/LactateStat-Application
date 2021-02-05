@@ -2,7 +2,6 @@ package com.example.lactatestat.activities;
 
 import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,7 +14,10 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -27,7 +29,6 @@ import androidx.core.content.ContextCompat;
 import com.example.lactatestat.R;
 import com.example.lactatestat.services.BleService;
 import com.example.lactatestat.services.GattActions;
-import com.example.lactatestat.utilities.MessageUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
@@ -38,9 +39,11 @@ import static com.example.lactatestat.services.GattActions.EVENT;
 import static com.example.lactatestat.services.GattActions.LACTATESTAT_DATA;
 import static com.example.lactatestat.utilities.MessageUtils.createDialog;
 
-public class SessionActivity extends AppCompatActivity {
+public class SessionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final String TAG = SessionActivity.class.getSimpleName();
     private static final String SELECTED_DEVICE = "selectedDevice";
+    private static final String BIAS_VOLTAGE_INDEX = "biasVoltageIndex";
+    private static final String BIAS_POLARITY_INDEX = "biasPolarityIndex";
 
     private BluetoothDevice mSelectedDevice = null;
     private BleService mBluetoothLeService;
@@ -51,6 +54,16 @@ public class SessionActivity extends AppCompatActivity {
     private TextView mConnectionStatusView;
     private ImageView mStatusIcon;
     private TextView mLeftAxisLabel;
+
+    private Spinner mBiasVoltageSpinner;
+    private Spinner mBiasPolaritySpinner;
+
+    private int mBiasVoltageIndex;
+    private int mBiasPolarityIndex;
+
+    private int tiacnRegister = 27;
+    private int refcnRegister = 22;
+    private int modecnRegister = 3;
 
     private ILineDataSet set = null;
     private LineChart mChart;
@@ -93,13 +106,47 @@ public class SessionActivity extends AppCompatActivity {
         });
 
         mCurrentView = findViewById(R.id.current_data);
-        mLactateView = findViewById(R.id.lactate_data);
+        mLactateView = findViewById(R.id.voltage_data);
         mConnectionStatusView = findViewById(R.id.status_info);
         mStatusIcon = findViewById(R.id.status_icon);
         mLeftAxisLabel = findViewById(R.id.left_axis_label);
 
+        mBiasVoltageSpinner = findViewById(R.id.session_bias_voltage_Spinner);
+        mBiasVoltageSpinner.setOnItemSelectedListener(this);
+
+        mBiasPolaritySpinner = findViewById(R.id.session_bias_polarity_spinner);
+        mBiasPolaritySpinner.setOnItemSelectedListener(this);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> mBiasVoltageAdapter = ArrayAdapter.createFromResource(this,
+                R.array.bias_voltage_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        mBiasVoltageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        mBiasVoltageSpinner.setAdapter(mBiasVoltageAdapter);
+
+        mBiasVoltageSpinner.setSelection(2);
+
+        ArrayAdapter<CharSequence> mBiasPolarityAdapter = ArrayAdapter.createFromResource(this,
+                R.array.bias_polarity_array, android.R.layout.simple_spinner_item);
+        mBiasPolarityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mBiasPolaritySpinner.setAdapter(mBiasPolarityAdapter);
+
+
         final Intent intent = getIntent();
         mSelectedDevice = intent.getParcelableExtra(SELECTED_DEVICE);
+        mBiasVoltageIndex = intent.getIntExtra(BIAS_VOLTAGE_INDEX, 6);
+        mBiasPolarityIndex = intent.getIntExtra(BIAS_POLARITY_INDEX, 1);
+
+        mBiasVoltageSpinner.setSelection(mBiasVoltageIndex);
+        mBiasPolaritySpinner.setSelection(mBiasPolarityIndex);
+
+        // Update the refcn register and send to board
+        // Update with the settings from previous activity
+        refcnRegister &= ~(0x1F); // Clear first five bits
+        refcnRegister |= mBiasVoltageIndex;
+        refcnRegister |= ((mBiasPolarityIndex << 4) | mBiasVoltageIndex);
+        // Now write to the characteristic
 
         if (mSelectedDevice == null) {
             Dialog alert = createDialog("Error", "No LactateStat board connected", this);
@@ -142,6 +189,20 @@ public class SessionActivity extends AppCompatActivity {
             unbindService(mServiceConnection);
             mBluetoothLeService = null;
         }
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        // An item was selected. You can retrieve the selected item using
+        // parent.getItemAtPosition(pos)
+        mBiasVoltageIndex = mBiasVoltageSpinner.getSelectedItemPosition();
+        mBiasPolarityIndex = mBiasPolaritySpinner.getSelectedItemPosition();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+        // Another interface callback
 
     }
 
