@@ -133,8 +133,8 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
 
         final Intent intent = getIntent();
         mSelectedDevice = intent.getParcelableExtra(SELECTED_DEVICE);
-        mBiasVoltageIndex = intent.getIntExtra(BIAS_VOLTAGE_INDEX, 6);
-        mBiasPolarityIndex = intent.getIntExtra(BIAS_POLARITY_INDEX, 1);
+        mBiasVoltageIndex = intent.getIntExtra(BIAS_VOLTAGE_INDEX, 2);
+        mBiasPolarityIndex = intent.getIntExtra(BIAS_POLARITY_INDEX, 0);
 
         mBiasVoltageSpinner.setSelection(mBiasVoltageIndex);
         mBiasPolaritySpinner.setSelection(mBiasPolarityIndex);
@@ -243,10 +243,11 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
                             break;
                         case DATA_AVAILABLE:
                             final int adcValue = intent.getIntExtra(LACTATESTAT_DATA, 0);
-                            double voltage = adcValue / 1.13777777778;
-                            double current = (voltage - (3600 * 0.2)) / 350000;
-                            mVoltageView.setText(String.format("%.2f mV", voltage));
-                            mCurrentView.setText(String.format("%.0f nA", current * Math.pow(10, 6)));
+                            double voltage = adcValue / 1241.21212121;
+                            double current = (voltage - (3.3 * 0.2)) / 350000;
+                            double milliVoltage = adcValue / 1.2412121212121;
+                            mVoltageView.setText(String.format("%.1f mV", milliVoltage));
+                            mCurrentView.setText(String.format("%1.2e A", current));
                             break;
                         case GATT_DISCONNECTED:
                             mConnectionStatusView.setText(R.string.status_not_connected);

@@ -72,8 +72,8 @@ public class PreStartSettingsActivity extends AppCompatActivity implements Adapt
         mBiasPolarityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBiasPolaritySpinner.setAdapter(mBiasPolarityAdapter);
 
-        mBiasVoltageSpinner.setSelection(6);
-        mBiasPolaritySpinner.setSelection(1);
+        mBiasVoltageSpinner.setSelection(2);
+        mBiasPolaritySpinner.setSelection(0);
 
         final Intent intent = getIntent();
         mSelectedDevice = intent.getParcelableExtra(SELECTED_DEVICE);
