@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -30,6 +31,12 @@ import com.example.lactatestat.R;
 import com.example.lactatestat.services.BleService;
 import com.example.lactatestat.services.GattActions;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
@@ -188,6 +195,64 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         mVoltageView.setText(R.string.loading);
         mCurrentView.setText(R.string.loading);
 
+        // Setup UI reference for the chart
+        mChart = findViewById(R.id.lactatestat_chart);
+
+        // Disable description text
+        mChart.getDescription().setEnabled(false);
+
+        // Enable touch gestures
+        mChart.setTouchEnabled(true);
+
+        // enable scaling and dragging
+        mChart.setDragEnabled(true);
+        mChart.setScaleEnabled(true);
+        mChart.setDrawGridBackground(false);
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        mChart.setPinchZoom(false);
+
+        // set an alternative background color
+        mChart.setBackgroundColor(Color.WHITE);
+
+        LineData data = new LineData();
+        data.setValueTextColor(Color.BLACK);
+
+        // add empty data
+        mChart.setData(data);
+
+        // get the legend (only possible after setting data)
+        Legend l = mChart.getLegend();
+
+        // modify the legend ...
+        l.setForm(Legend.LegendForm.LINE);
+        l.setTextColor(Color.BLACK);
+
+        // X-axis setup
+        XAxis bottomAxis = mChart.getXAxis();
+        bottomAxis.setTextColor(Color.BLACK);
+        bottomAxis.setDrawGridLines(true);
+        bottomAxis.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        bottomAxis.setAvoidFirstLastClipping(true);
+        bottomAxis.setEnabled(true);
+
+        // Y-axis setup
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.setTextColor(Color.BLACK);
+        leftAxis.setDrawGridLines(true);
+        leftAxis.setAxisMaximum(1000f);
+        leftAxis.setAxisMinimum(-1000f);
+        leftAxis.setDrawGridLines(true);
+        // Disable right Y-axis
+        YAxis rightAxis = mChart.getAxisRight();
+        rightAxis.setEnabled(false);
+
+        mChart.getAxisLeft().setDrawGridLines(true);
+        mChart.getXAxis().setDrawGridLines(false);
+        mChart.setDrawBorders(false);
+
+        feedMultiple();
+
         Intent mGattServiceIntent = new Intent(SessionActivity.this, BleService.class);
         bindService(mGattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
@@ -266,6 +331,77 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         }
     };
 
+    /*
+A method to add our current entries to the chart
+ */
+    private void addEntry(double current) {
+        LineData data = mChart.getData();
+
+
+        if (data != null) {
+            set = data.getDataSetByIndex(0);
+            // set.addEntry(.....); Can be called as well
+        }
+
+        if (set == null) {
+            set = createSet();
+            assert data != null;
+            data.addDataSet(set);
+        }
+
+        assert data != null;
+        data.addEntry(new Entry(set.getEntryCount(), (float) current), 0);
+        data.notifyDataChanged();
+
+        // let the chart know it's data has changed
+        mChart.notifyDataSetChanged();
+
+        // limit the number of visible entries
+        mChart.setVisibleXRangeMaximum(30);
+        //mChart.setVisibleYRange(0,30, YAxis.AxisDependency.LEFT);
+
+        // move to the latest entry
+        //mChart.moveViewToX(data.getEntryCount());
+        mChart.moveViewTo(data.getEntryCount(), (float) current, YAxis.AxisDependency.LEFT);
+    }
+
+    private LineDataSet createSet() {
+
+        LineDataSet set = new LineDataSet(null, "Current");
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setLineWidth(3f);
+        set.setColor(Color.RED);
+        set.setHighlightEnabled(false);
+        set.setDrawValues(false);
+        set.setDrawCircles(true);
+        set.setCircleRadius(2f);
+        return set;
+    }
+
+    private void feedMultiple() {
+
+        if (mThread != null) {
+            mThread.interrupt();
+        }
+
+        mThread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                while (true) {
+                    plotData = true;
+                    try {
+                        Thread.sleep(900);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        mThread.start();
+    }
+
     // A BroadcastReceiver handling various events fired by the Service, see GattActions.Event.
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -291,6 +427,11 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
                                         mInternalZeroValues.get(mInternalZeroIndex))) / (mTiaGainValues.get(mTiaGainIndex));
                                 mVoltageView.setText(String.format("%.1f mV", milliVoltage));
                                 mCurrentView.setText(String.format("%1.1e A", current / 1000));
+
+                                if (plotData) {
+                                    addEntry(current * 1000000); // Add our entries in milli ampere
+                                    plotData = false;
+                                }
                             }
                             break;
                         case GATT_DISCONNECTED:
