@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tia_gain_array">
+        <item>External resistor</item>
+        <item>2.75 kOhm</item>
+        <item>3.5 kOhm</item>
+        <item>7 kOhm</item>
+        <item>14 kOhm</item>
+        <item>35 kOhm</item>
+        <item>120 kOhm</item>
+        <item>350 kOhm</item>
+    </string-array>
+</resources>

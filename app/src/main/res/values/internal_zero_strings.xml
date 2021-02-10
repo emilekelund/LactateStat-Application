@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="internal_zero_array">
+        <item>20%</item>
+        <item>50%</item>
+        <item>67%</item>
+    </string-array>
+</resources>

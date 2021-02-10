@@ -45,17 +45,17 @@ public class BleService extends Service {
     private BluetoothAdapter mBluetoothAdapter;
     private String mBluetoothDeviceAddress;
     private BluetoothGatt mBluetoothGatt;
-    private int biasValue = 6;
+    private int registerValues = 7936;
 
     private BluetoothGattService mLactateStatBleService;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        biasValue = intent.getIntExtra("BiasValue", 0);
-        Log.i(TAG, "BiasValue: " + biasValue);
+        registerValues = intent.getIntExtra("RegisterValues", 7936);
+        Log.i(TAG, "RegisterValue: " + registerValues);
 
-        setBiasValue(biasValue);
+        setRegisterValues(registerValues);
 
         return START_STICKY;
     }
@@ -128,7 +128,7 @@ public class BleService extends Service {
         @Override
         public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
             super.onDescriptorWrite(gatt, descriptor, status);
-            boolean setBias = setBiasValue(3);
+            boolean setBias = setRegisterValues(7936);
             Log.i(TAG, "SetRegister: " + setBias);
         }
 
@@ -238,7 +238,7 @@ public class BleService extends Service {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public boolean setBiasValue(int biasValue) {
+    public boolean setRegisterValues(int registerValues) {
         if (mBluetoothAdapter == null && mBluetoothGatt == null) {
             Log.i(TAG, "BluetoothAdapter not initialized");
             return false;
@@ -246,7 +246,7 @@ public class BleService extends Service {
 
         BluetoothGattCharacteristic settingsCharacteristic =
                 mLactateStatBleService.getCharacteristic(LACTATESTAT_SETTINGS);
-        boolean setVal = settingsCharacteristic.setValue(biasValue, BluetoothGattCharacteristic.FORMAT_UINT32, 0);
+        boolean setVal = settingsCharacteristic.setValue(registerValues, BluetoothGattCharacteristic.FORMAT_UINT32, 0);
         Log.i(TAG,"SetValue: " + setVal);
 
         return mBluetoothGatt.writeCharacteristic(settingsCharacteristic);

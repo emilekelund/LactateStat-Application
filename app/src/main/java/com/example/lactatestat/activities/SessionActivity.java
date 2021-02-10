@@ -32,6 +32,8 @@ import com.example.lactatestat.services.GattActions;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.example.lactatestat.services.GattActions.ACTION_GATT_LACTATESTAT_EVENT;
@@ -44,6 +46,9 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     private static final String SELECTED_DEVICE = "selectedDevice";
     private static final String BIAS_VOLTAGE_INDEX = "biasVoltageIndex";
     private static final String BIAS_POLARITY_INDEX = "biasPolarityIndex";
+    private static final String TIA_GAIN_INDEX = "tiaGainIndex";
+    private static final String LOAD_RESISTOR_INDEX = "loadResistorIndex";
+    private static final String INTERNAL_ZERO_INDEX = "internalZeroIndex";
 
     private BluetoothDevice mSelectedDevice = null;
     private BleService mBluetoothLeService;
@@ -60,17 +65,30 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
 
     private int mBiasVoltageIndex;
     private int mBiasPolarityIndex;
+    private int mTiaGainIndex;
+    private int mLoadResistorIndex;
+    private int mInternalZeroIndex;
+
+    private boolean firstStart = true;
+
+    private int mTiacnRegister = 31;
+    private int mRefcnRegister = 2;
+
+    private static final ArrayList<Integer> mTiaGainValues = new ArrayList<>(
+            Arrays.asList(0, 2750, 3500, 7000, 14000, 35000, 120000, 350000)
+    );
+    private static final ArrayList<Double> mInternalZeroValues = new ArrayList<>(
+            Arrays.asList(0.2, 0.5, 0.67)
+    );
 
     private ILineDataSet set = null;
     private LineChart mChart;
     private Thread mThread;
     private static boolean plotData = true;
 
-    private boolean connected = false;
-
     private long timeSinceSamplingStart = 0;
 
-    private final CountDownTimer mCountDownTimer = new
+    private final CountDownTimer mSamplingTimeTimer = new
             CountDownTimer(86400000, 50) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -82,6 +100,20 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
 
                 }
             };
+
+    private final CountDownTimer mRegisterUpdateTimer = new
+            CountDownTimer(3700, 3000) {
+                @Override
+                public void onTick(long l) {
+                    sendRegisterUpdate();
+                }
+
+                @Override
+                public void onFinish() {
+                    firstStart = false;
+                    Log.i(TAG, "Timer Finished");
+                }
+            }.start();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,6 +127,7 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         // TOOLBAR: BACK ARROW
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,8 +156,6 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         // Apply the adapter to the spinner
         mBiasVoltageSpinner.setAdapter(mBiasVoltageAdapter);
 
-        mBiasVoltageSpinner.setSelection(2);
-
         ArrayAdapter<CharSequence> mBiasPolarityAdapter = ArrayAdapter.createFromResource(this,
                 R.array.bias_polarity_array, android.R.layout.simple_spinner_item);
         mBiasPolarityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -135,9 +166,17 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         mSelectedDevice = intent.getParcelableExtra(SELECTED_DEVICE);
         mBiasVoltageIndex = intent.getIntExtra(BIAS_VOLTAGE_INDEX, 2);
         mBiasPolarityIndex = intent.getIntExtra(BIAS_POLARITY_INDEX, 0);
+        mTiaGainIndex = intent.getIntExtra(TIA_GAIN_INDEX,7);
+        mLoadResistorIndex = intent.getIntExtra(LOAD_RESISTOR_INDEX,3);
+        mInternalZeroIndex = intent.getIntExtra(INTERNAL_ZERO_INDEX,0);
+
+        updateRegisters();
 
         mBiasVoltageSpinner.setSelection(mBiasVoltageIndex);
         mBiasPolaritySpinner.setSelection(mBiasPolarityIndex);
+
+        Log.i(TAG, "voltageIndex: " + mBiasVoltageIndex);
+        Log.i(TAG, "polarityIndex: " + mBiasPolarityIndex);
 
         if (mSelectedDevice == null) {
             Dialog alert = createDialog("Error", "No LactateStat board connected", this);
@@ -146,8 +185,12 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
             mDeviceAddress = mSelectedDevice.getAddress();
         }
 
-        Intent mGattServiceIntent = new Intent(this, BleService.class);
+        mVoltageView.setText(R.string.loading);
+        mCurrentView.setText(R.string.loading);
+
+        Intent mGattServiceIntent = new Intent(SessionActivity.this, BleService.class);
         bindService(mGattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -186,11 +229,11 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
-        mBiasVoltageIndex = mBiasVoltageSpinner.getSelectedItemPosition();
-        mBiasPolarityIndex = mBiasPolaritySpinner.getSelectedItemPosition();
-        Log.i(TAG, "OnItemSelected: " + mBiasVoltageIndex);
-        if (connected) {
-            setBiasValue(mBiasVoltageIndex);
+        if (!firstStart) {
+            mBiasVoltageIndex = mBiasVoltageSpinner.getSelectedItemPosition();
+            mBiasPolarityIndex = mBiasPolaritySpinner.getSelectedItemPosition();
+            Log.i(TAG, "OnItemSelected: " + mBiasVoltageIndex);
+            sendRegisterUpdate();
         }
     }
 
@@ -239,15 +282,16 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
                             mConnectionStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
                             mConnectionStatusView.setTextColor(getResources().getColor(R.color.connectedColor));
                             mStatusIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_baseline_bluetooth_connected_35));
-                            connected = true;
                             break;
                         case DATA_AVAILABLE:
-                            final int adcValue = intent.getIntExtra(LACTATESTAT_DATA, 0);
-                            double voltage = adcValue / 1241.21212121;
-                            double current = (voltage - (3.3 * 0.2)) / 350000;
-                            double milliVoltage = adcValue / 1.2412121212121;
-                            mVoltageView.setText(String.format("%.1f mV", milliVoltage));
-                            mCurrentView.setText(String.format("%1.2e A", current));
+                            if (!firstStart) {
+                                final int adcValue = intent.getIntExtra(LACTATESTAT_DATA, 0);
+                                double milliVoltage = adcValue / 1.2412121212121;
+                                double current = (milliVoltage - (3300 *
+                                        mInternalZeroValues.get(mInternalZeroIndex))) / (mTiaGainValues.get(mTiaGainIndex));
+                                mVoltageView.setText(String.format("%.1f mV", milliVoltage));
+                                mCurrentView.setText(String.format("%1.1e A", current / 1000));
+                            }
                             break;
                         case GATT_DISCONNECTED:
                             mConnectionStatusView.setText(R.string.status_not_connected);
@@ -277,9 +321,33 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         return intentFilter;
     }
 
-    public void setBiasValue(int biasValue) {
+    public void sendRegisterUpdate() {
         final Intent intent = new Intent(this, BleService.class);
-        intent.putExtra("BiasValue", biasValue);
+        updateRegisters();
+        int registerValues = mTiacnRegister << 8;
+        registerValues |= mRefcnRegister;
+        intent.putExtra("RegisterValues", registerValues);
         this.startService(intent);
+    }
+
+    private void updateRegisters() {
+        // Update the TIACN and REFCN registers depending on the received settings.
+        // Update REFCN register first
+        // Start with bias voltage and bias sign
+        mRefcnRegister &= ~(0x1F); // Clear the first five bits so that a bitwise or can be used
+        mRefcnRegister |= mBiasVoltageIndex;
+        mRefcnRegister |= ((mBiasPolarityIndex << 4) | mBiasVoltageIndex);
+        // Update internal zero
+        mRefcnRegister &= ~(3 << 5);
+        mRefcnRegister |= (mInternalZeroIndex << 5);
+        Log.i(TAG, "REFCN REG: " + mRefcnRegister);
+        // Now we update the TIACN register
+        // We start with TIA gain
+        mTiacnRegister &= ~(7 << 2); // Clear bits 2-4
+        mTiacnRegister |= (mTiaGainIndex << 2); // Write to bits 2-4
+        // Now load resistor
+        mTiacnRegister &= ~3; // Clear 0th and 1st bits
+        mTiacnRegister |= mLoadResistorIndex;
+        Log.i(TAG, "TIACN REG: " + mTiacnRegister);
     }
 }

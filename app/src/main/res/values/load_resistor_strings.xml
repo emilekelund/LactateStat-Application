@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="load_resistor_array">
+        <item>10 Ohm</item>
+        <item>33 Ohm</item>
+        <item>50 Ohm</item>
+        <item>100 Ohm</item>
+    </string-array>
+</resources>
