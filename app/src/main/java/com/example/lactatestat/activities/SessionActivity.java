@@ -105,7 +105,7 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     private int mRefcnRegister = 2;
 
     private static final ArrayList<Integer> mTiaGainValues = new ArrayList<>(
-            Arrays.asList(0, 2750, 3500, 7000, 14000, 35000, 120000, 350000)
+            Arrays.asList(2727000, 2750, 3500, 7000, 14000, 35000, 120000, 350000)
     );
     private static final ArrayList<Double> mInternalZeroValues = new ArrayList<>(
             Arrays.asList(0.2, 0.5, 0.67)
@@ -489,7 +489,7 @@ A method to add our current entries to the chart
                                 mCurrentView.setText(String.format("%1.1e A", current / 1000));
 
                                 if (plotData) {
-                                    addEntry(current * 1000000); // Add our entries in milli ampere
+                                    addEntry(current * 1000000); // Add our entries in nano ampere
                                     plotData = false;
                                 }
 
