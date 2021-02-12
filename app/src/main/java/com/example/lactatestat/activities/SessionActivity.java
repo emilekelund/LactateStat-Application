@@ -1,5 +1,6 @@
 package com.example.lactatestat.activities;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -8,28 +9,37 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.lactatestat.R;
 import com.example.lactatestat.services.BleService;
 import com.example.lactatestat.services.GattActions;
+import com.example.lactatestat.utilities.MessageUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -39,8 +49,15 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Objects;
 
 import static com.example.lactatestat.services.GattActions.ACTION_GATT_LACTATESTAT_EVENT;
@@ -66,6 +83,12 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     private TextView mConnectionStatusView;
     private ImageView mStatusIcon;
     private TextView mLeftAxisLabel;
+
+    private SwitchCompat mSaveDataSwitch;
+    private ToggleButton mPauseSaveButton;
+
+    private static final DateFormat df = new SimpleDateFormat("yyMMdd_HH:mm"); // Custom date format for file saving
+    private FileOutputStream dataSample = null;
 
     private Spinner mBiasVoltageSpinner;
     private Spinner mBiasPolaritySpinner;
@@ -140,6 +163,40 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+
+        mPauseSaveButton = findViewById(R.id.pause_save_button);
+        mSaveDataSwitch =  findViewById(R.id.save_data_switch);
+
+        mSaveDataSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                // Button is checked, create a new file and start the timer
+                dataSample = createFiles();
+                mSamplingTimeTimer.start();
+                MessageUtils.showToast("Data saving started", getApplicationContext());
+            } else {
+                try {
+                    // Button is unchecked, close the file
+                    closeFiles(dataSample);
+                    MessageUtils.showToast("Data is now stored on your phone.", getApplicationContext());
+                    mSamplingTimeTimer.cancel();
+                    timeSinceSamplingStart = 0;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        mPauseSaveButton.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                // Button is checked, change to play icon
+                Drawable playIcon = ContextCompat.getDrawable(this, R.drawable.ic_baseline_play_arrow_24);
+                mPauseSaveButton.setCompoundDrawablesWithIntrinsicBounds(playIcon,null,null,null);
+            } else {
+                // Button is unchecked, change icon back
+                Drawable pauseIcon = ContextCompat.getDrawable(this, R.drawable.ic_baseline_pause_24);
+                mPauseSaveButton.setCompoundDrawablesWithIntrinsicBounds(pauseIcon,null,null,null);
             }
         });
 
@@ -256,6 +313,8 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         Intent mGattServiceIntent = new Intent(SessionActivity.this, BleService.class);
         bindService(mGattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
+        isStoragePermissionGranted();
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -273,9 +332,12 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mGattUpdateReceiver);
-        if (mBluetoothLeService != null) {
-            unbindService(mServiceConnection);
-            mBluetoothLeService = null;
+        if (mThread != null) {
+            mThread.interrupt();
+        }
+        // When the activity is paused, toggle the button so that the files are closed
+        if (mSaveDataSwitch.isChecked()) {
+            mSaveDataSwitch.toggle();
         }
     }
 
@@ -283,11 +345,9 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mBluetoothLeService != null) {
-            unbindService(mServiceConnection);
-            mBluetoothLeService = null;
-        }
-
+        unbindService(mServiceConnection);
+        mBluetoothLeService = null;
+        mThread.interrupt();
     }
 
     @Override
@@ -432,6 +492,15 @@ A method to add our current entries to the chart
                                     addEntry(current * 1000000); // Add our entries in milli ampere
                                     plotData = false;
                                 }
+
+                                if (mSaveDataSwitch.isChecked() && !mPauseSaveButton.isChecked()) {
+                                    try {
+                                        dataSample.write(((float)timeSinceSamplingStart / 1000f + ",").getBytes());
+                                        dataSample.write((current + "\n").getBytes());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                             }
                             break;
                         case GATT_DISCONNECTED:
@@ -490,5 +559,61 @@ A method to add our current entries to the chart
         mTiacnRegister &= ~3; // Clear 0th and 1st bits
         mTiacnRegister |= mLoadResistorIndex;
         Log.i(TAG, "TIACN REG: " + mTiacnRegister);
+    }
+
+    // Method to sample data used by the ToggleButton
+    private FileOutputStream createFiles() {
+        // Get the external storage location
+        String root = Environment.getExternalStorageDirectory().toString();
+        // Create a new directory
+        File myDir = new File(root, "/LactateStat_Data");
+        if (!myDir.exists()) {
+            myDir.mkdirs();
+        }
+
+        String lactateStat = "LactateStat_" + df.format(Calendar.getInstance().getTime()) + ".csv";
+
+        File lactateStatFile = new File(myDir, lactateStat);
+
+        try {
+            lactateStatFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            return new FileOutputStream(lactateStatFile, true);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    // Helper method to close the files.
+    private static void closeFiles(FileOutputStream fo) throws IOException {
+        fo.flush();
+        fo.close();
+    }
+
+    // Method to check if the user has granted access to store data on external memory
+    public boolean isStoragePermissionGranted() {
+        String TAG = "Storage Permission";
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (this.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "Permission is granted");
+                return true;
+            } else {
+                Log.i(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.i(TAG,"Permission is granted");
+            return true;
+        }
     }
 }
