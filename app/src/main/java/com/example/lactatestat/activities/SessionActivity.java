@@ -496,7 +496,7 @@ A method to add our current entries to the chart
                                 if (mSaveDataSwitch.isChecked() && !mPauseSaveButton.isChecked()) {
                                     try {
                                         dataSample.write(((float)timeSinceSamplingStart / 1000f + ",").getBytes());
-                                        dataSample.write((current + "\n").getBytes());
+                                        dataSample.write((current / 1000 + "\n").getBytes());
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
