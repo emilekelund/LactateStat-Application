@@ -241,6 +241,8 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
 
         Log.i(TAG, "voltageIndex: " + mBiasVoltageIndex);
         Log.i(TAG, "polarityIndex: " + mBiasPolarityIndex);
+        Log.i(TAG, "TIA index: " + mTiaGainIndex);
+        Log.i(TAG, "Internal z index:" + mInternalZeroIndex);
 
         if (mSelectedDevice == null) {
             Dialog alert = createDialog("Error", "No LactateStat board connected", this);
@@ -417,7 +419,7 @@ A method to add our current entries to the chart
         mChart.notifyDataSetChanged();
 
         // limit the number of visible entries
-        mChart.setVisibleXRangeMaximum(30);
+        mChart.setVisibleXRangeMaximum(2000);
         //mChart.setVisibleYRange(0,30, YAxis.AxisDependency.LEFT);
 
         // move to the latest entry
@@ -429,12 +431,11 @@ A method to add our current entries to the chart
 
         LineDataSet set = new LineDataSet(null, "Current");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setLineWidth(3f);
+        set.setLineWidth(2f);
         set.setColor(Color.RED);
         set.setHighlightEnabled(false);
         set.setDrawValues(false);
-        set.setDrawCircles(true);
-        set.setCircleRadius(2f);
+        set.setDrawCircles(false);
         return set;
     }
 
@@ -496,7 +497,8 @@ A method to add our current entries to the chart
                                 if (mSaveDataSwitch.isChecked() && !mPauseSaveButton.isChecked()) {
                                     try {
                                         dataSample.write(((float)timeSinceSamplingStart / 1000f + ",").getBytes());
-                                        dataSample.write((current / 1000 + "\n").getBytes());
+                                        dataSample.write((current / 1000 + ",").getBytes());
+                                        dataSample.write((milliVoltage + "\n").getBytes());
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
