@@ -5,7 +5,7 @@ The LactateStat Android Application used in my master thesis: LactateStat: Weara
 
 
 
-## Copyright disclamer
+## Copyright disclaimer
 
 Copyright (c) 2021 Emil Ekelund
 
