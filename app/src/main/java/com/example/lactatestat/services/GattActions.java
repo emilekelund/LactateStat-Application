@@ -1,5 +1,7 @@
 package com.example.lactatestat.services;
 
+// Copyright (c) 2021 Emil Ekelund
+
 public class GattActions {
     /**
      * The action corresponding to LactateStat events from BleService.

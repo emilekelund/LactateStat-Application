@@ -1,5 +1,7 @@
 package com.example.lactatestat.services;
 
+// Copyright (c) 2021 Emil Ekelund
+
 import java.util.UUID;
 
 public class LactateStatUUIDs {

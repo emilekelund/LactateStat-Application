@@ -1,5 +1,7 @@
 package com.example.lactatestat.utilities;
 
+// Copyright (c) 2021 Emil Ekelund
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;

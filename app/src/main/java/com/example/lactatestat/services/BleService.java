@@ -1,5 +1,7 @@
 package com.example.lactatestat.services;
 
+// Copyright (c) 2021 Emil Ekelund
+
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -35,8 +37,6 @@ import static com.example.lactatestat.services.LactateStatUUIDs.*;
  * <p>
  * NB! Do not to confuse this Android Service with the Ble Gatt service on
  * the LactateStat board.
- * This class is based on the example https://gits-15.sys.kth.se/anderslm/Ble-Gatt-with-Service
- * but with relevant modifications made to fit this specific project
  */
 
 public class BleService extends Service {

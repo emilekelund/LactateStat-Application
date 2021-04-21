@@ -1,5 +1,7 @@
 package com.example.lactatestat.activities;
 
+// Copyright (c) 2021 Emil Ekelund
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;

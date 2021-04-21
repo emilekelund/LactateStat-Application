@@ -1,5 +1,7 @@
 package com.example.lactatestat.utilities;
 
+// Copyright (c) 2021 Emil Ekelund
+
 public class BitConverter {
 
     public static int bytesToInt(byte[] bytes) {

@@ -1,5 +1,7 @@
 package com.example.lactatestat.adapters;
 
+// Copyright (c) 2021 Emil Ekelund
+
 import android.bluetooth.BluetoothDevice;
 import android.view.LayoutInflater;
 import android.view.View;

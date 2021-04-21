@@ -1,5 +1,7 @@
 package com.example.lactatestat.activities;
 
+// Copyright (c) 2021 Emil Ekelund
+
 import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
