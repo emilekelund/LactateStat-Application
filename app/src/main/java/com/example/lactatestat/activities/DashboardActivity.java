@@ -100,4 +100,9 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
     }
+
+    public void viewHistory(View view) {
+        Intent startHistory = new Intent(this, HistoryActivity.class);
+        startActivity(startHistory);
+    }
 }
