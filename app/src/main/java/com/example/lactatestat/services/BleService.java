@@ -119,7 +119,6 @@ public class BleService extends Service {
 
             System.arraycopy(characteristic.getValue(), 0, rawData, 0,
                     characteristic.getValue().length);
-            Log.i("rawData: ", Arrays.toString(rawData));
 
             int adcValue = BitConverter.bytesToInt(rawData);
             broadcastLactateStatData(adcValue);
