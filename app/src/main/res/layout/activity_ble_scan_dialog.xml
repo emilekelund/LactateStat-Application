@@ -35,7 +35,7 @@
 
     <TextView
         android:id="@+id/scan_info_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|center_vertical"
         app:layout_constraintEnd_toEndOf="@+id/ble_alert_text"
