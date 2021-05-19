@@ -1,5 +1,5 @@
 # LactateStat-Application
-The LactateStat Android Application used in my master thesis: LactateStat: Wearable Electronics and User-Friendly Software for Real-Time Sweat Monitoring. Connects to my custom PCB over BLE. Can also write to relevant registers of the PCB for full control via the application. Related repositories are found on my profile.
+The LactateStat Android Application used in my master thesis: LactateStat: Wearable Electronics and Software for Real-Time Lactate Monitoring in Sweat. Connects to my custom PCB over BLE. Can also write to relevant registers of the PCB for full control via the application. Related repositories are found on my profile.
 
 ![Alt text](https://i.imgur.com/YZXMPES.png "Dashboard") ![Alt text](https://i.imgur.com/BACqtdj.png "Session")
 
