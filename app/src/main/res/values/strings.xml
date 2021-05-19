@@ -13,8 +13,8 @@
     <string name="no_data">No Data</string>
     <string name="pause_saving">Pause Saving</string>
     <string name="continue_saving">Continue Saving</string>
-    <string name="time_s">Time / s</string>
-    <string name="current_na">Current / nA</string>
+    <string name="time_s">Time (s)</string>
+    <string name="current_na">Current (nA)</string>
     <string name="save_data">Save Data</string>
     <string name="stop_save">Stop Save</string>
     <string name="select_graph_unit">Select Graph Unit</string>
@@ -30,4 +30,8 @@
     <string name="load_resistor">Load resistor:</string>
     <string name="internal_zero">Internal zero:</string>
     <string name="loading">Loading...</string>
+    <string name="open_data">Open data</string>
+    <string name="choose_calibration">Choose Calibration</string>
+    <string name="calibration">Calibration</string>
+    <string name="larger_samples_might_take_long_to_open">Larger samples might take long to open, do not click on the file more than once.</string>
 </resources>
