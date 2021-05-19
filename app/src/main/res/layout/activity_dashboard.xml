@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -53,7 +54,8 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:onClick="viewHistory"
         android:text="@string/history_button_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/secondaryTextColor"
@@ -85,7 +87,8 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:onClick="startNewSession"
         android:text="@string/new_session"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/secondaryTextColor"
@@ -95,8 +98,7 @@
         app:iconTint="#FF5722"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/connect_button"
-        android:onClick="startNewSession"/>
+        app:layout_constraintTop_toBottomOf="@+id/connect_button" />
 
     <ImageView
         android:id="@+id/bl_status_icon"
@@ -110,5 +112,23 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_35"
         android:contentDescription="@string/ble_connection_status_icon" />
+
+    <Button
+        android:id="@+id/calibration_start_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
+        android:text="@string/calibration"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="22sp"
+        app:backgroundTint="@color/white"
+        app:icon="@drawable/ic_baseline_insights_50"
+        app:iconTint="#AA00FF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/history_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
