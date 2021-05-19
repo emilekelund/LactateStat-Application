@@ -6,9 +6,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -32,6 +29,7 @@
             android:theme="@android:style/Theme.Material.Light.Dialog.NoActionBar"
             tools:targetApi="lollipop" />
         <activity android:name=".activities.SessionActivity"/>
+        <activity android:name=".activities.HistoryActivity"/>
         <activity android:name=".activities.PreStartSettingsActivity"/>
         <service android:name="com.example.lactatestat.services.BleService" />
     </application>
