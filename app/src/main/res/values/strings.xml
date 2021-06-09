@@ -35,10 +35,10 @@
     <string name="calibration">Calibration</string>
     <string name="larger_samples_might_take_long_to_open">Larger samples might take long to open, do not click on the file more than once.</string>
     <string name="calibration_info_text">Enter calibration values, Current (nA) and Lactate (mM).</string>
-    <string name="lactate_mm">Lactate (mM)</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibration_result">Calibration result</string>
     <string name="save_calibration">Save calibration</string>
     <string name="make_a_new_calibration_or_use_an_old_one_before_starting_a_new_session">Make a new calibration or use an old one before starting a new session if you want to see real time lactate values.</string>
     <string name="new_calibration">New calibration</string>
+    <string name="lactate_mm">Lactate (mM)</string>
 </resources>
