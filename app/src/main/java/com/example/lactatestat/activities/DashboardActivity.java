@@ -95,7 +95,7 @@ public class DashboardActivity extends AppCompatActivity {
             startSettings.putExtra(SELECTED_DEVICE, mSelectedDevice);
             startActivity(startSettings);
         } else {
-            Dialog alert = createDialog("Error", "Please connect to LactateStat First", this);
+            Dialog alert = createDialog("Error", "Please connect to LactateStat first", this);
             alert.show();
         }
 
