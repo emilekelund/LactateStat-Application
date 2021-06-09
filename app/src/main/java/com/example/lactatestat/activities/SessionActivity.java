@@ -90,13 +90,15 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     private static final String TIA_GAIN_INDEX = "tiaGainIndex";
     private static final String LOAD_RESISTOR_INDEX = "loadResistorIndex";
     private static final String INTERNAL_ZERO_INDEX = "internalZeroIndex";
+    private static final String SLOPE = "slope";
+    private static final String INTERCEPT = "intercept";
 
     private BluetoothDevice mSelectedDevice = null;
     private BleService mBluetoothLeService;
     private String mDeviceAddress;
 
     private TextView mCurrentView;
-    private TextView mVoltageView;
+    private TextView mLactateView;
     private TextView mConnectionStatusView;
     private ImageView mStatusIcon;
     private TextView mLeftAxisLabel;
@@ -113,6 +115,9 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     private int mTiaGainIndex;
     private int mLoadResistorIndex;
     private int mInternalZeroIndex;
+
+    private float slope = 0;
+    private float intercept = 0;
 
     private boolean firstStart = true;
 
@@ -188,7 +193,7 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         mSaveDataButton =  findViewById(R.id.save_data_button);
 
         mCurrentView = findViewById(R.id.current_data);
-        mVoltageView = findViewById(R.id.voltage_data);
+        mLactateView = findViewById(R.id.lactate_data);
         mConnectionStatusView = findViewById(R.id.status_info);
         mStatusIcon = findViewById(R.id.status_icon);
         mLeftAxisLabel = findViewById(R.id.left_axis_label);
@@ -238,8 +243,11 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
             mDeviceAddress = mSelectedDevice.getAddress();
         }
 
-        mVoltageView.setText(R.string.loading);
+        mLactateView.setText(R.string.loading);
         mCurrentView.setText(R.string.loading);
+
+        slope = intent.getFloatExtra(SLOPE, slope);
+        intercept = intent.getFloatExtra(INTERCEPT, intercept);
 
         // Setup UI reference for the chart
         mChart = findViewById(R.id.lactatestat_chart);
@@ -469,7 +477,8 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
                                 double milliVoltage = adcValue / 1.2412121212121;
                                 double current = (milliVoltage - (3300 *
                                         mInternalZeroValues.get(mInternalZeroIndex))) / (mTiaGainValues.get(mTiaGainIndex));
-                                mVoltageView.setText(String.format("%.1f mV", milliVoltage));
+                                double lactate = currentToLactate((float) (current / 1000));
+                                mLactateView.setText(String.format("%.1f mM", lactate));
                                 mCurrentView.setText(String.format("%1.1e A", current / 1000));
 
                                 if (plotData) {
@@ -539,6 +548,10 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         mTiacnRegister &= ~3; // Clear 0th and 1st bits
         mTiacnRegister |= mLoadResistorIndex;
         Log.i(TAG, "TIACN REG: " + mTiacnRegister);
+    }
+
+    private float currentToLactate(float current) {
+        return (slope * current) + intercept;
     }
 
     // Request code for creating a csv file.
