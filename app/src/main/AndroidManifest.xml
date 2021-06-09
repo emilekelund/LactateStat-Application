@@ -31,6 +31,7 @@
         <activity android:name=".activities.SessionActivity"/>
         <activity android:name=".activities.HistoryActivity"/>
         <activity android:name=".activities.PreStartSettingsActivity"/>
+        <activity android:name=".activities.CalibrationActivity" />
         <service android:name="com.example.lactatestat.services.BleService" />
     </application>
 
