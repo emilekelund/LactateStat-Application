@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -54,16 +53,17 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="24dp"
+        android:onClick="startSession"
         android:text="@string/start_session"
+        android:textColor="@color/secondaryTextColor"
         android:textSize="16sp"
         app:backgroundTint="@color/white"
-        app:icon="@drawable/ic_baseline_playlist_add_check_24"
+        app:icon="@drawable/ic_baseline_playlist_add_check_35"
         app:iconTint="@color/secondaryDarkColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:onClick="startSession" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Spinner
         android:id="@+id/bias_voltage_spinner"
@@ -190,5 +190,55 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/internal_zero_text"
         app:layout_constraintTop_toTopOf="@+id/internal_zero_text" />
+
+    <Button
+        android:id="@+id/choose_calibration_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/choose_calibration"
+        android:textColor="@color/primaryDarkColor"
+        app:backgroundTint="@color/white"
+        app:icon="@drawable/ic_baseline_save_35"
+        app:iconTint="#F50057"
+        app:layout_constraintBottom_toTopOf="@+id/start_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:onClick="loadCalibration" />
+
+    <Button
+        android:id="@+id/new_calibration_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/new_calibration"
+        android:textColor="@color/secondaryTextColor"
+        app:backgroundTint="@color/white"
+        app:icon="@drawable/ic_baseline_insights_35"
+        app:iconTint="#00838F"
+        app:layout_constraintBottom_toTopOf="@+id/choose_calibration_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:onClick="newCalibration" />
+
+    <TextView
+        android:id="@+id/info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="@string/make_a_new_calibration_or_use_an_old_one_before_starting_a_new_session"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/new_calibration_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
