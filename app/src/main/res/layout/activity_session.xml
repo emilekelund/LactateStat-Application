@@ -59,12 +59,12 @@
         android:textColor="@color/secondaryTextColor"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="@+id/vertical_divider"
-        app:layout_constraintEnd_toStartOf="@+id/voltage_data"
+        app:layout_constraintEnd_toStartOf="@+id/lactate_data"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/status_info" />
 
     <TextView
-        android:id="@+id/voltage_data"
+        android:id="@+id/lactate_data"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
@@ -85,7 +85,7 @@
         android:layout_marginTop="8dp"
         android:background="#0097A7"
         app:layout_constraintBottom_toTopOf="@+id/horizontal_divider"
-        app:layout_constraintEnd_toStartOf="@+id/voltage_data"
+        app:layout_constraintEnd_toStartOf="@+id/lactate_data"
         app:layout_constraintStart_toEndOf="@+id/current_data"
         app:layout_constraintTop_toBottomOf="@+id/status_info" />
 
@@ -230,6 +230,6 @@
         app:backgroundTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/graph_info_text"
-        app:layout_constraintTop_toBottomOf="@+id/voltage_data" />
+        app:layout_constraintTop_toBottomOf="@+id/lactate_data" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
