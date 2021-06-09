@@ -294,8 +294,8 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTextColor(Color.BLACK);
         leftAxis.setDrawGridLines(true);
-        leftAxis.setAxisMaximum(1000f);
-        leftAxis.setAxisMinimum(-1000f);
+        leftAxis.setAxisMaximum(25f);
+        leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
         // Disable right Y-axis
         YAxis rightAxis = mChart.getAxisRight();
@@ -387,7 +387,7 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
     /*
     A method to add our current entries to the chart
     */
-    private void addEntry(double current) {
+    private void addEntry(double lactate) {
         LineData data = mChart.getData();
 
 
@@ -403,7 +403,7 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         }
 
         assert data != null;
-        data.addEntry(new Entry(set.getEntryCount(), (float) current), 0);
+        data.addEntry(new Entry(set.getEntryCount(), (float) lactate), 0);
         data.notifyDataChanged();
 
         // let the chart know it's data has changed
@@ -415,12 +415,12 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
 
         // move to the latest entry
         //mChart.moveViewToX(data.getEntryCount());
-        mChart.moveViewTo(data.getEntryCount(), (float) current, YAxis.AxisDependency.LEFT);
+        mChart.moveViewTo(data.getEntryCount(), (float) lactate, YAxis.AxisDependency.LEFT);
     }
 
     private LineDataSet createSet() {
 
-        LineDataSet set = new LineDataSet(null, "Current");
+        LineDataSet set = new LineDataSet(null, "Lactate");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setLineWidth(2f);
         set.setColor(Color.RED);
@@ -477,18 +477,18 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
                                 double milliVoltage = adcValue / 1.2412121212121;
                                 double current = (milliVoltage - (3300 *
                                         mInternalZeroValues.get(mInternalZeroIndex))) / (mTiaGainValues.get(mTiaGainIndex));
-                                double lactate = currentToLactate((float) (current / 1000));
+                                double lactate = currentToLactate((current / 1000));
                                 mLactateView.setText(String.format("%.1f mM", lactate));
                                 mCurrentView.setText(String.format("%1.1e A", current / 1000));
 
                                 if (plotData) {
-                                    addEntry(current * 1000000); // Add our entries in nano ampere
+                                    addEntry(lactate); // Add our entries in nano ampere
                                     plotData = false;
                                 }
 
                                 mSampledValues.add((double) (timeSinceSamplingStart/1000));
-                                mSampledValues.add(current / 1000);
-                                mSampledValues.add(milliVoltage);
+                                mSampledValues.add((double) current / 1000);
+                                mSampledValues.add(lactate);
 
                             }
                             break;
@@ -550,7 +550,7 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
         Log.i(TAG, "TIACN REG: " + mTiacnRegister);
     }
 
-    private float currentToLactate(float current) {
+    private double currentToLactate(double current) {
         return (slope * current) + intercept;
     }
 
