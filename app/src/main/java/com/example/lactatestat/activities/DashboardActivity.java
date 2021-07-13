@@ -28,10 +28,12 @@ public class DashboardActivity extends AppCompatActivity {
 
     private static final String TAG = BleScanDialog.class.getSimpleName();
     private static final String SELECTED_DEVICE = "selectedDevice";
+    private static final String DEVICE_NAME = "deviceName";
 
     private BluetoothDevice mSelectedDevice = null;
     private TextView mStatusView;
     private String mDeviceAddress;
+    private String mDeviceName;
     private ImageView mStatusIconView;
 
     static final int SCAN_DEVICE_REQUEST = 0;
@@ -81,6 +83,7 @@ public class DashboardActivity extends AppCompatActivity {
                     mStatusView.setTextColor(getResources().getColor(R.color.connectedColor));
                     mStatusIconView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_bluetooth_connected_35));
                     mDeviceAddress = mSelectedDevice.getAddress();
+                    mDeviceName = mSelectedDevice.getName();
                     Log.i(TAG, "DeviceAddress: " + mDeviceAddress);
                 }
             }
@@ -93,6 +96,7 @@ public class DashboardActivity extends AppCompatActivity {
         if (mSelectedDevice != null && !mStatusView.getText().toString().equals("LactateStat not connected")) {
             Log.d(TAG, "status view: " + mStatusView.getText().toString());
             startSettings.putExtra(SELECTED_DEVICE, mSelectedDevice);
+            startSettings.putExtra(DEVICE_NAME, mDeviceName);
             startActivity(startSettings);
         } else {
             Dialog alert = createDialog("Error", "Please connect to LactateStat first", this);
