@@ -34,6 +34,7 @@ import static com.example.lactatestat.utilities.MessageUtils.createDialog;
 public class PreStartSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final String TAG = PreStartSettingsActivity.class.getSimpleName();
     private static final String SELECTED_DEVICE = "selectedDevice";
+    private static final String DEVICE_NAME = "deviceName";
     private static final String BIAS_VOLTAGE_INDEX = "biasVoltageIndex";
     private static final String BIAS_POLARITY_INDEX = "biasPolarityIndex";
     private static final String TIA_GAIN_INDEX = "tiaGainIndex";
@@ -41,6 +42,8 @@ public class PreStartSettingsActivity extends AppCompatActivity implements Adapt
     private static final String INTERNAL_ZERO_INDEX = "internalZeroIndex";
     private static final String SLOPE = "slope";
     private static final String INTERCEPT = "intercept";
+
+    private String mDeviceName;
 
     private TextView mCalibrationInfo;
 
@@ -143,6 +146,7 @@ public class PreStartSettingsActivity extends AppCompatActivity implements Adapt
             alert.show();
         } else {
             String mDeviceAddress = mSelectedDevice.getAddress();
+            mDeviceName = mSelectedDevice.getName();
         }
     }
 
@@ -207,7 +211,14 @@ public class PreStartSettingsActivity extends AppCompatActivity implements Adapt
     }
 
     public void startSession(View view) {
-        Intent startSession = new Intent(this, SessionActivity.class);
+        Intent startSession = null;
+
+        if (mDeviceName.contains("Combined")) {
+            startSession = new Intent(this, CombinedSessionActivity.class);
+        } else {
+            startSession = new Intent(this, SessionActivity.class);
+        }
+
         startSession.putExtra(SELECTED_DEVICE, mSelectedDevice);
         startSession.putExtra(BIAS_VOLTAGE_INDEX, mBiasVoltageIndex);
         startSession.putExtra(BIAS_POLARITY_INDEX, mBiasPolarityIndex);
