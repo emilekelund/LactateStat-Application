@@ -482,7 +482,7 @@ public class SessionActivity extends AppCompatActivity implements AdapterView.On
                                 mCurrentView.setText(String.format("%1.1e A", current / 1000));
 
                                 if (plotData) {
-                                    addEntry(lactate); // Add our entries in nano ampere
+                                    addEntry(lactate);
                                     plotData = false;
                                 }
 
