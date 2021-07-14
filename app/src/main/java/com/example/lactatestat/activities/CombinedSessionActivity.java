@@ -405,7 +405,7 @@ public class CombinedSessionActivity extends AppCompatActivity {
                         case GATT_CONNECTED:
                         case GATT_SERVICES_DISCOVERED:
                         case LACTATESTAT_SERVICE_DISCOVERED:
-                            mConnectionStatusView.setText(String.format("Connected to: %s", mSelectedDevice.getName()));
+                            mConnectionStatusView.setText(R.string.connected_to_lactatestat);
                             mConnectionStatusView.setTextColor(getResources().getColor(R.color.connectedColor));
                             mStatusIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_baseline_bluetooth_connected_35));
                             break;
@@ -421,7 +421,7 @@ public class CombinedSessionActivity extends AppCompatActivity {
 
                                 double resistance = (combinedValues[1] * 6650.0) / Math.pow(2,16) * 2;
                                 double temperature = (resistance - 1000) / (1000 * 0.00385);
-                                double potential = combinedValues[3] * MULTIPLIER;
+                                double potential = combinedValues[2] * MULTIPLIER;
                                 mPotentiometerView.setText(String.format("%.1f mV", potential));
                                 mTemperatureView.setText(String.format("%.1f\u00B0C", temperature));
 
@@ -433,6 +433,8 @@ public class CombinedSessionActivity extends AppCompatActivity {
                                 mSampledValues.add((double) (timeSinceSamplingStart/1000));
                                 mSampledValues.add((double) current / 1000);
                                 mSampledValues.add(lactate);
+                                mSampledValues.add(potential);
+                                mSampledValues.add(temperature);
 
                             }
                             break;
@@ -538,18 +540,22 @@ public class CombinedSessionActivity extends AppCompatActivity {
                 uri = resultData.getData();
                 try {
                     OutputStream outputStream = getContentResolver().openOutputStream(uri);
-
+                    outputStream.write(("Time (s), Current (A), Lactate (mM), Potential (mV), Temperature (\u00B0C)").getBytes());
                     // Write our sampled values to the created file
-                    for (int i = 0; i < mSampledValues.size(); i+=3){
+                    for (int i = 0; i < mSampledValues.size(); i+=5){
                         try {
                             outputStream.write((mSampledValues.get(i) + ",").getBytes());
                             outputStream.write((mSampledValues.get(i+1) + ",").getBytes());
-                            outputStream.write((mSampledValues.get(i+2) + "\n").getBytes());
+                            outputStream.write((mSampledValues.get(i+2) + ",").getBytes());
+                            outputStream.write((mSampledValues.get(i+3) + ",").getBytes());
+                            outputStream.write((mSampledValues.get(i+4) + "\n").getBytes());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
