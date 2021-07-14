@@ -208,4 +208,44 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontal_divider_2" />
 
+    <TextView
+        android:id="@+id/current_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/current"
+        app:layout_constraintEnd_toEndOf="@+id/current_data_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/vertical_divider_1" />
+
+    <TextView
+        android:id="@+id/temperature_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/temperature"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/current_data_view"
+        app:layout_constraintTop_toTopOf="@+id/vertical_divider_1" />
+
+    <TextView
+        android:id="@+id/lactate_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/lactate"
+        app:layout_constraintEnd_toEndOf="@+id/lactate_data_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_divider_2" />
+
+    <TextView
+        android:id="@+id/potential_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/potential"
+        app:layout_constraintEnd_toStartOf="@+id/lactate_data"
+        app:layout_constraintStart_toEndOf="@+id/lactate_data_view"
+        app:layout_constraintTop_toTopOf="@+id/horizontal_divider_2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
