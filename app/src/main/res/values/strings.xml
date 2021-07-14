@@ -42,4 +42,6 @@
     <string name="new_calibration">New calibration</string>
     <string name="lactate_mm">Lactate (mM)</string>
     <string name="connected_to_lactatestat">Connected to: LactateStat</string>
+    <string name="temperature">Temperature</string>
+    <string name="potential">Potential</string>
 </resources>
