@@ -116,7 +116,6 @@ public class BleService extends Service {
                                             BluetoothGattCharacteristic characteristic) {
             // Copy the received byte array so we have a threadsafe copy
             byte[] rawData = new byte[characteristic.getValue().length];
-            Log.i(TAG, "Length: " + characteristic.getValue().length);
 
             System.arraycopy(characteristic.getValue(), 0, rawData, 0,
                     characteristic.getValue().length);
@@ -125,7 +124,9 @@ public class BleService extends Service {
                 int adcValue = BitConverter.bytesToInt(rawData);
                 broadcastLactateStatData(adcValue);
             } else {
+                Log.i(TAG,"RAW DATA:" + Arrays.toString(rawData));
                 int[] combinedValues = BitConverter.bytesToIntArray(rawData);
+                Log.i(TAG, "Converted values: " + Arrays.toString(combinedValues));
                 broadcastCombinedLactateStatData(combinedValues);
             }
         }
@@ -278,6 +279,7 @@ public class BleService extends Service {
         final Intent intent = new Intent(ACTION_GATT_LACTATESTAT_EVENT);
         intent.putExtra(EVENT, Event.DATA_AVAILABLE);
         intent.putExtra(LACTATESTAT_DATA, lactateStatData);
+        sendBroadcast(intent);
     }
 
     /*
