@@ -540,7 +540,7 @@ public class CombinedSessionActivity extends AppCompatActivity {
                 uri = resultData.getData();
                 try {
                     OutputStream outputStream = getContentResolver().openOutputStream(uri);
-                    outputStream.write(("Time (s), Current (A), Lactate (mM), Potential (mV), Temperature (\u00B0C)").getBytes());
+                    outputStream.write(("Time (s), Current (A), Lactate (mM), Potential (mV), Temperature (\u00B0C)\n").getBytes());
                     // Write our sampled values to the created file
                     for (int i = 0; i < mSampledValues.size(); i+=5){
                         try {
