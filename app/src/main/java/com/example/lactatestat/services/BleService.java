@@ -124,9 +124,7 @@ public class BleService extends Service {
                 int adcValue = BitConverter.bytesToInt(rawData);
                 broadcastLactateStatData(adcValue);
             } else {
-                Log.i(TAG,"RAW DATA:" + Arrays.toString(rawData));
                 int[] combinedValues = BitConverter.bytesToIntArray(rawData);
-                Log.i(TAG, "Converted values: " + Arrays.toString(combinedValues));
                 broadcastCombinedLactateStatData(combinedValues);
             }
         }
