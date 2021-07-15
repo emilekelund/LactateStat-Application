@@ -34,7 +34,6 @@ import static com.example.lactatestat.utilities.MessageUtils.createDialog;
 public class PreStartSettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final String TAG = PreStartSettingsActivity.class.getSimpleName();
     private static final String SELECTED_DEVICE = "selectedDevice";
-    private static final String DEVICE_NAME = "deviceName";
     private static final String BIAS_VOLTAGE_INDEX = "biasVoltageIndex";
     private static final String BIAS_POLARITY_INDEX = "biasPolarityIndex";
     private static final String TIA_GAIN_INDEX = "tiaGainIndex";
