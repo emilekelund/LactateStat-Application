@@ -412,7 +412,7 @@ public class CombinedSessionActivity extends AppCompatActivity {
                         case DATA_AVAILABLE:
                             if (!firstStart) {
                                 final int[] combinedValues = intent.getIntArrayExtra(LACTATESTAT_DATA);
-                                double milliVoltage = combinedValues[0] / 1.2412121212121;
+                                double milliVoltage = combinedValues[2] / 1.2412121212121;
                                 double current = (milliVoltage - (3300 *
                                         mInternalZeroValues.get(mInternalZeroIndex))) / (mTiaGainValues.get(mTiaGainIndex));
                                 double lactate = currentToLactate((current / 1000));
@@ -421,7 +421,7 @@ public class CombinedSessionActivity extends AppCompatActivity {
 
                                 double resistance = (combinedValues[1] * 6650.0) / Math.pow(2,16) * 2;
                                 double temperature = (resistance - 1000) / (1000 * 0.00385);
-                                double potential = combinedValues[2] * MULTIPLIER;
+                                double potential = combinedValues[0] * MULTIPLIER;
                                 mPotentiometerView.setText(String.format("%.1f mV", potential));
                                 mTemperatureView.setText(String.format("%.1f\u00B0C", temperature));
 
